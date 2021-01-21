@@ -73,7 +73,7 @@ url:
     filename: "nucl_gb.accession2taxid.gz"
     gz:       "ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz"
     md5:      "ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz.md5"
-  LINES:
-    "http://sines.eimb.ru/banks/SINEs.bnk"
-  SINES:
-    "http://sines.eimb.ru/banks/LINEs.bnk"
+  lineSine:
+    filename: "lines_sines.fasta.zst"
+    zst:      "https://cloudstor.aarnet.edu.au/plus/s/Swv9Soe477eCBvW/download"
+    md5:      "https://cloudstor.aarnet.edu.au/plus/s/CmYr5ydMmeDvcQQ/download"

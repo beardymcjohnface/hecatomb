@@ -485,22 +485,29 @@ rule line_sine_download:
     """
     A database of LINES and SINES that we screen against to 
     remove contaminants.
+    
+    LINES: "http://sines.eimb.ru/banks/SINEs.bnk"
+    SINES: "http://sines.eimb.ru/banks/LINEs.bnk"
 
     Note that the current version has two ids with the same name
-    but different sequences, so we use seqtk to rename them
+    but different sequences, so we used seqtk to rename them
     """
     output:
         os.path.join(CONPATH, "line_sine.fasta")
     conda:
-        "envs/seqtkcurl.yaml"
+        "envs/curl.yaml"
     params:
-        lines = config["url"]["LINES"],
-        sines = config["url"]["SINES"]
+        filename = config["url"]["line_sine"]["filename"],
+        zst = config["url"]["line_sine"]["zst"],
+        md5 = config["url"]["line_sine"]["md5"]
     shell:
         """
-        (curl -L "{params.lines}" && curl -L "{params.sines}") \
-            | sed -e '/^>/ s/ /_/g' | seqtk rename \
-            > {output}
+        cd {CONPATH};
+        curl -Lgo {params.filename} "{params.zst}";
+        curl -Lgo {params.filename}.md5 "{params.md5}";
+        md5sum -c {params.filename}.md5;
+        rm {params.filename}.md5;
+        zstd -d {params.filename} --rm
         """
 
 
