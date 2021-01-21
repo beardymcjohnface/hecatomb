@@ -1,0 +1,79 @@
+---
+Paths:
+  # The Database directory is where to save the databases. 
+  # You can install them using download_databases.snakefile
+  Databases: databases
+
+  # Temp is a temporary directory. By default we make 
+  # subdirectories in here for each application
+  Temp: tmp
+ 
+  # The Reads directory has your input fastq files that you want
+  # to process through hecatomb
+  Reads: test_data/fastq
+
+
+DatabaseFiles:
+  # These are our predefined databases that we screen against, but you may want to replace host with e.g. mouse
+  bacteria: bac_uniquespecies_giant.masked_Ns_removed.fasta
+  host: human_virus_masked.fasta
+  contaminants: vector_contaminants.fa.gz
+
+
+Options:
+  # These are options that control the flow of the pipeline and add additional
+  # processing steps. Set these to True to include them or False to ignore them
+  # run_prinseq first cleans the reads with prinseq++
+  run_prinseq: True
+  # use_bowtie substitutes bowtie2 and samtools for bbmap
+  use_bowtie: True
+
+
+Output:
+  # Clumped is where the clumpify output of the original reads is written. QC is the output for all the QC steps
+  Clumped: clumped
+  QC: QC
+  Results: results
+
+
+System:
+  # How much memory you want to allocate to java
+  Memory: -Xmx128g
+
+
+# URLs and checksums for databases
+url:
+  hecatomb:
+    filename: "hecatomb.databases.tar.zst"
+    tar:      "https://cloudstor.aarnet.edu.au/plus/s/A4Swxf13wES8Uez/download"
+    md5:      "https://cloudstor.aarnet.edu.au/plus/s/vnilMkcFLQTDqB4/download"
+  uniprot_virus:
+    filename: "uniprot_virus_c99.tar.zst"
+    tar:      "https://cloudstor.aarnet.edu.au/plus/s/PLoGhe47HmFgosv/download"
+    md5:      "https://cloudstor.aarnet.edu.au/plus/s/UigsJNrKF8tvjC6/download"
+  uniref50:
+    "ftp://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref50/uniref50.fasta.gz"
+  id_map:
+    filename: "uniprot_ncbi_mapping.dat.zst"
+    zst:      "https://cloudstor.aarnet.edu.au/plus/s/nASd4zM3RfDvbux/download"
+    md5:      "https://cloudstor.aarnet.edu.au/plus/s/pgCGnu7pei4pHOC/download"
+  hecatomb_nucl:
+    filename: "hecatomb.nucleotide.databases.tar.zst"
+    tar:      "https://cloudstor.aarnet.edu.au/plus/s/30agxBFKqlj3bm3/download"
+    md5:      "https://cloudstor.aarnet.edu.au/plus/s/WjLjPMkkR59AaQE/download"
+  taxonomizer:
+    filename: "taxonomizr_accessionTaxa.sql.zst"
+    zst:      "https://cloudstor.aarnet.edu.au/plus/s/ox7yIlWxhwpmGUy/download"
+    md5:      "https://cloudstor.aarnet.edu.au/plus/s/aR4VCCF0cA4l2R4/download"
+  taxdump:
+    filename: "taxdump.tar.gz"
+    tar:      "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+    md5:      "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz.md5"
+  ntacc2tax:
+    filename: "nucl_gb.accession2taxid.gz"
+    gz:       "ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz"
+    md5:      "ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz.md5"
+  LINES:
+    "http://sines.eimb.ru/banks/SINEs.bnk"
+  SINES:
+    "http://sines.eimb.ru/banks/LINEs.bnk"
