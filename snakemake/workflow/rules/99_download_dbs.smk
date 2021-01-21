@@ -18,7 +18,7 @@ rule download_hecatomb_db:
         os.path.join(CONPATH, "nebnext_adapters.fa"),
         os.path.join(CONPATH, "primerB.fa"),
         os.path.join(CONPATH, "rc_primerB_ad6.fa")
-    conda: "envs/curl.yaml"
+    conda: "../envs/curl.yaml"
     params:
         wd = DBDIR,
         tar = config["url"]["hecatomb"]["tar"],
@@ -45,7 +45,7 @@ rule download_nucleotide_databases:
         os.path.join(NUCLPATH,"refseq_virus_nt_UniVec_masked/nt.fnaDB.index"),
         os.path.join(NUCLPATH,"bac_virus_masked/nt.fnaDB.index")
     conda:
-        "envs/curl.yaml"
+        "../envs/curl.yaml"
     params:
         wd = DBDIR,
         filename = config["url"]["hecatomb_nucl"]["filename"],
@@ -91,7 +91,7 @@ rule make_bac_databases:
         mem_mb=50000,
         cpus=16
     conda:
-        "envs/bbmap.yaml"
+        "../envs/bbmap.yaml"
     shell:
         "cd {params.wd} && bbmap.sh -Xmx{resources.mem_mb}m threads={resources.cpus} ref={params.fa}"
 
@@ -114,7 +114,7 @@ rule make_bac_bt_idx:
         fa = config['DatabaseFiles']['bacteria'],
         bt = "bac_uniquespecies_giant.masked_Ns_removed"
     conda:
-        "envs/bowtie2.yaml"
+        "../envs/bowtie2.yaml"
     shell:
         "cd {params.wd} && bowtie2-build --threads {resources.cpus} --large-index {params.fa} {params.bt}"
 
@@ -134,7 +134,7 @@ rule make_host_databases:
         mem_mb=50000,
         cpus=16
     conda:
-        "envs/bbmap.yaml"
+        "../envs/bbmap.yaml"
     shell:
         "cd {params.wd} && bbmap.sh -Xmx{resources.mem_mb}m threads={resources.cpus} ref={params.fa}"
 
@@ -157,7 +157,7 @@ rule make_host_bt_idx:
         btidx = "human_virus_masked",
         fa = config['DatabaseFiles']['host']
     conda:
-        "envs/bowtie2.yaml"
+        "../envs/bowtie2.yaml"
     shell:
         "cd {params.wd} && bowtie2-build --threads {resources.cpus} --large-index {params.fa} {params.btidx}"
 
@@ -212,7 +212,7 @@ rule download_ncbi_taxonomy:
     """
     output:
         os.path.join(TAXPATH, "taxdump.tar.gz")
-    conda: "envs/curl.yaml"
+    conda: "../envs/curl.yaml"
     params:
         wd = TAXPATH,
         filename = config["url"]["taxdump"]["filename"],
@@ -256,7 +256,7 @@ rule download_accession_to_tax:
     """
     output:
         os.path.join(TAXPATH, "nucl_gb.accession2taxid.gz")
-    conda: "envs/curl.yaml"
+    conda: "../envs/curl.yaml"
     params:
         wd = TAXPATH,
         filename = config["url"]["ntacc2tax"]["filename"],
@@ -281,7 +281,7 @@ rule extract_accession_to_tax:
     output:
         os.path.join(TAXPATH, "nucl_gb.accession2taxid")
     conda:
-        "envs/pigz.yaml"
+        "../envs/pigz.yaml"
     shell:
         "unpigz {input}"
 
@@ -388,7 +388,7 @@ rule mmseqs_uniprot_taxdb:
         mem_mb=100000,
         cpus=8
     conda:
-        "envs/mmseqs2.yaml"
+        "../envs/mmseqs2.yaml"
     output:
         multiext(os.path.join(PROTPATH, "uniprot_virus_c99"),
                  ".db_mapping", ".db_names.dmp", ".db_nodes.dmp",
@@ -406,9 +406,7 @@ rule download_uniref50:
     """
     output:
         os.path.join(PROTPATH, "uniref50.fasta.gz")
-    resources:
-
-    conda: "envs/curl.yaml"
+    conda: "../envs/curl.yaml"
     params: config["url"]["uniref50"]
     shell:
         """
@@ -422,7 +420,7 @@ rule uniref_plus_viruses:
     output:
         temp(os.path.join(URVPATH, "uniref50_virus.fasta"))
     conda:
-        "envs/pigz.yaml"
+        "../envs/pigz.yaml"
     shell:
         """
         unpigz -c {input.ur} | cat - {input.vr} > {output}
@@ -439,7 +437,7 @@ rule mmseqs_urv:
         mem_mb=20000,
         cpus=8
     conda:
-        "envs/mmseqs2.yaml"
+        "../envs/mmseqs2.yaml"
     shell:
         "mmseqs createdb {input} {output}"
 
@@ -461,7 +459,7 @@ rule mmseqs_urv_taxonomy:
         mem_mb=100000,
         cpus=8
     conda:
-        "envs/mmseqs2.yaml"
+        "../envs/mmseqs2.yaml"
     shell:
         """
         mmseqs createtaxdb --ncbi-tax-dump {params.tax} --tax-mapping-file {input.idm} {input.vdb} \
@@ -482,7 +480,7 @@ rule mmseqs_nt_db:
         mem_mb=20000,
         cpus=8
     conda:
-        "envs/mmseqs2.yaml"
+        "../envs/mmseqs2.yaml"
     params:
         db = os.path.join(NUCLPATH, "ntDB")
     shell:
@@ -505,7 +503,7 @@ rule line_sine_download:
     output:
         os.path.join(CONPATH, "line_sine.fasta")
     conda:
-        "envs/curl.yaml"
+        "../envs/curl.yaml"
     params:
         wd = CONPATH,
         filename = config["url"]["lineSine"]["filename"],
@@ -537,7 +535,7 @@ rule line_sine_format:
         mem_mb=100000,
         cpus=8
     conda:
-        "envs/bowtie2.yaml"
+        "../envs/bowtie2.yaml"
     shell:
         """
         bowtie2-build {input} {params.idx}
@@ -551,7 +549,7 @@ rule download_taxonomizr:
     output:
           os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql")
     conda:
-         "envs/curl.yaml"
+         "../envs/curl.yaml"
     params:
         wd = TAXPATH,
         filename = config["url"]["taxonomizer"]["filename"],
