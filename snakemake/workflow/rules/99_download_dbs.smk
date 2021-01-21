@@ -497,9 +497,9 @@ rule line_sine_download:
     conda:
         "envs/curl.yaml"
     params:
-        filename = config["url"]["line_sine"]["filename"],
-        zst = config["url"]["line_sine"]["zst"],
-        md5 = config["url"]["line_sine"]["md5"]
+        filename = config["url"]["lineSine"]["filename"],
+        zst = config["url"]["lineSine"]["zst"],
+        md5 = config["url"]["lineSine"]["md5"]
     shell:
         """
         cd {CONPATH};
