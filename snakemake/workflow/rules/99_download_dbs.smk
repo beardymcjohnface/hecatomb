@@ -20,12 +20,13 @@ rule download_hecatomb_db:
         os.path.join(CONPATH, "rc_primerB_ad6.fa")
     conda: "envs/curl.yaml"
     params:
+        wd = DBDIR,
         tar = config["url"]["hecatomb"]["tar"],
         md5 = config["url"]["hecatomb"]["md5"],
         filename = config["url"]["hecatomb"]["filename"]
     shell:
         """
-        cd {DBDIR}; \
+        cd {params.wd}; \
         curl -Lgo {params.filename} '{params.tar}'; \
         curl -Lgo {params.filename}.md5 '{params.md5}'; \
         md5sum -c {params.filename}.md5; \
@@ -46,12 +47,13 @@ rule download_nucleotide_databases:
     conda:
         "envs/curl.yaml"
     params:
-        filename=config["url"]["hecatomb_nucl"]["filename"],
-        tar=config["url"]["hecatomb_nucl"]["tar"],
-        md5=config["url"]["hecatomb_nucl"]["md5"]
+        wd = DBDIR,
+        filename = config["url"]["hecatomb_nucl"]["filename"],
+        tar = config["url"]["hecatomb_nucl"]["tar"],
+        md5 = config["url"]["hecatomb_nucl"]["md5"]
     shell:
         """
-        cd {DBDIR}; \
+        cd {params.wd}; \
         curl -Lgo {params.filename} "{params.tar}"; \
         curl -Lgo {params.filename}.md5 "{params.md5}"; \
         md5sum -c {params.filename}.md5; \
@@ -189,12 +191,13 @@ rule download_uniprot_ncbi_mapping:
     output:
         os.path.join(TAXPATH, "uniprot_ncbi_mapping.dat")
     params:
+        wd = TAXPATH,
         filename = config["url"]["id_map"]["filename"],
         zst = config["url"]["id_map"]["zst"],
         md5 = config["url"]["id_map"]["md5"]
     shell:
         """
-        cd {TAXPATH}; \
+        cd {params.wd}; \
         curl -Lo {params.filename} "{params.zst}"; \
         curl -Lo {params.filename}.md5 "{params.md5}"; \
         md5sum -c {params.filename}.md5; \
@@ -211,12 +214,13 @@ rule download_ncbi_taxonomy:
         os.path.join(TAXPATH, "taxdump.tar.gz")
     conda: "envs/curl.yaml"
     params:
+        wd = TAXPATH,
         filename = config["url"]["taxdump"]["filename"],
         tar = config["url"]["taxdump"]["tar"],
         md5 = config["url"]["taxdump"]["md5"]
     shell:
         """
-        cd {TAXPATH}; \
+        cd {params.wd}; \
         curl -Lo {params.filename} "{params.tar}"; \
         curl -Lo {params.filename}.md5 "{params.md5}"; \
         md5sum -c {params.filename}.md5; \
@@ -240,8 +244,10 @@ rule extract_ncbi_taxonomy:
         temp(os.path.join(TAXPATH, "readme.txt")),
         temp(os.path.join(TAXPATH, "names.dmp")),
         temp(os.path.join(TAXPATH, "nodes.dmp")),
+    params:
+        wd = TAXPATH
     shell:
-        "cd {TAXPATH} && tar xf taxdump.tar.gz"
+        "cd {params.wd} && tar xf taxdump.tar.gz"
 
 
 rule download_accession_to_tax:
@@ -252,12 +258,13 @@ rule download_accession_to_tax:
         os.path.join(TAXPATH, "nucl_gb.accession2taxid.gz")
     conda: "envs/curl.yaml"
     params:
+        wd = TAXPATH,
         filename = config["url"]["ntacc2tax"]["filename"],
         gz = config["url"]["ntacc2tax"]["gz"],
         md5 = config["url"]["ntacc2tax"]["md5"]
     shell:
         """
-        cd {TAXPATH}; \
+        cd {params.wd}; \
         curl -Lgo {params.filename} "{params.gz}"; \
         curl -Lgo {params.filename}.md5 "{params.md5}"; \
         md5sum -c {params.filename}.md5; \
@@ -349,12 +356,13 @@ rule download_uniprot_clusters:
     conda:
         "../envs/curl.yaml"
     params:
+        wd = PROTPATH,
         filename=config["url"]["uniprot_virus"]["filename"],
         tar=config["url"]["uniprot_virus"]["tar"],
         md5=config["url"]["uniprot_virus"]["md5"]
     shell:
         """
-        cd {PROTPATH}; \
+        cd {params.wd}; \
         curl -Lgo {params.filename} "{params.tar}"; \
         curl -Lgo {params.filename}.md5 "{params.md5}"; \
         md5sum -c {params.filename}.md5; \
@@ -398,6 +406,8 @@ rule download_uniref50:
     """
     output:
         os.path.join(PROTPATH, "uniref50.fasta.gz")
+    resources:
+
     conda: "envs/curl.yaml"
     params: config["url"]["uniref50"]
     shell:
@@ -497,12 +507,13 @@ rule line_sine_download:
     conda:
         "envs/curl.yaml"
     params:
+        wd = CONPATH,
         filename = config["url"]["lineSine"]["filename"],
         zst = config["url"]["lineSine"]["zst"],
         md5 = config["url"]["lineSine"]["md5"]
     shell:
         """
-        cd {CONPATH};
+        cd {params.wd};
         curl -Lgo {params.filename} "{params.zst}";
         curl -Lgo {params.filename}.md5 "{params.md5}";
         md5sum -c {params.filename}.md5;
@@ -542,12 +553,13 @@ rule download_taxonomizr:
     conda:
          "envs/curl.yaml"
     params:
-        filename=config["url"]["taxonomizer"]["filename"],
-        zst=config["url"]["taxonomizer"]["zst"],
-        md5=config["url"]["taxonomizer"]["md5"]
+        wd = TAXPATH,
+        filename = config["url"]["taxonomizer"]["filename"],
+        zst = config["url"]["taxonomizer"]["zst"],
+        md5 = config["url"]["taxonomizer"]["md5"]
     shell:
         """
-        cd {TAXPATH}; \
+        cd {params.wd}; \
         curl -Lgo {params.filename} "{params.zst}"; \
         curl -Lgo {params.filename}.md5 "{params.md5}"; \
         md5sum -c {params.filename}.md5; \
