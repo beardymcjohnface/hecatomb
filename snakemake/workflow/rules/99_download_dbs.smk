@@ -51,7 +51,7 @@ rule download_nucleotide_databases:
         md5=config["url"]["hecatomb_nucl"]["md5"]
     shell:
         """
-        cd {NUCLPATH}; \
+        cd {DBDIR}; \
         curl -Lgo {params.filename} "{params.tar}"; \
         curl -Lgo {params.filename}.md5 "{params.md5}"; \
         md5sum -c {params.filename}.md5; \
