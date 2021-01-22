@@ -75,5 +75,5 @@ url:
     md5:      "ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/nucl_gb.accession2taxid.gz.md5"
   lineSine:
     filename: "line_sine.fasta.zst"
-    zst:      "https://cloudstor.aarnet.edu.au/plus/s/Swv9Soe477eCBvW/download"
-    md5:      "https://cloudstor.aarnet.edu.au/plus/s/CmYr5ydMmeDvcQQ/download"
+    zst:      "https://cloudstor.aarnet.edu.au/plus/s/wXyN3AJX47hEDnF/download"
+    md5:      "https://cloudstor.aarnet.edu.au/plus/s/EiQQOKJ3jByD482/download"
