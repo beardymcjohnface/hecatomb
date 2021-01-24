@@ -234,7 +234,7 @@ rule find_non_phages:
     output:
         os.path.join(AA_OUT, "viruses_table.tsv")
     shell:
-        "grep -vf {PHAGE_LINEAGES} {input.av} > {output} || touch {output}"
+        "cat {input.av} | {{ grep -vf {PHAGE_LINEAGES} || true; }} > {output}"
 
 rule find_non_phage_seqs:
     input:
