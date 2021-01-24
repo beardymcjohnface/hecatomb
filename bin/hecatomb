@@ -9,12 +9,87 @@ Michael Roach, Jan 2020
 """
 
 import argparse
+import sys
+import os
+import pathlib
+import time
+from shutil import copyfile
+from subprocess import call
 
-parser = argparse.ArgumentParser(description='Hecatomb')
-parser.add_argument('command', help='install, config, run, help')
-parser.add_argument('--sum', dest='accumulate', action='store_const',
-                    const=sum, default=max,
-                    help='sum the integers (default: find the max)')
 
+sys.stderr.write("Hecatomb v0.1.0\n")
+
+
+# parse the command line arguments
+parser = argparse.ArgumentParser(description='Command line options:')
+parser.add_argument('command', choices=['install', 'config', 'run'])
+parser.add_argument('--config', help='config file name', default='config.yaml')
+parser.add_argument('--cluster', choices=['slurm', 'sge'])
 args = parser.parse_args()
+
+
+BINDIR = pathlib.Path(__file__).parent.absolute()
+SNEKDIR = os.path.normpath(os.path.join(BINDIR, '../snakemake'))
+EDITOR = os.environ.get('EDITOR','nano')
+
+
+def initialiseCluster(cluster):
+    """
+    Initialise the slurm or sge profile yaml file for running hecatomb on a cluster
+    :param cluster: args.cluster, either 'slurm' or 'sge'
+    :return:
+    """
+    clustSampleConf = os.path.join(BINDIR, f'../snakemake/config/sample_{cluster}.yaml')
+    clustConf = os.path.join(SNEKDIR, f'{cluster}.yaml')
+    if pathlib.Path(clustConf).is_file():
+        sys.stderr.write(f"Using {cluster} profile {clustConf}\n")
+    else:
+        copyfile(clustSampleConf, clustConf)
+        sys.stderr.write(f"Created {cluster}.yaml profile in {SNEKDIR}\n")
+    sys.stderr.write("\n--------------------\n\n")
+    f = open(clustConf, 'r')
+    for line in f:
+        sys.stderr.write(line)
+    f.close()
+    sys.stderr.write(f"\n\n--------------------\n\nEdit {cluster}.yaml in nano before continuing? [y/N]: ")
+    YN = input()
+    if 'y' in YN or 'Y' in YN:
+        call([EDITOR, clustConf])
+
+
+initialiseCluster(args.cluster)
+
+
+# Functions for installing and running hecatomb
+def install():
+    """
+    The install function. This will run the download and install database snakemake pipeline.
+    :return:
+    """
+    sys.stderr.write("Checking database files\n")
+
+
+def config():
+    """
+    The config function. This will simply copy the template config file to the working directory with
+    paths to database files etc. properly resolved.
+    :return:
+    """
+    sys.stderr.write("Generating a configuration file\n")
+
+
+def run():
+    """
+    The run function. This will run the hecatome snakemake pipeline itself.
+    :return:
+    """
+    sys.stderr.write("Running Hecatomb\n")
+
+
+# Run the program
+commands = {'install':install, 'config':config, 'run':run}
+commands[args.command]()
+
+time.sleep(2)
+
 
