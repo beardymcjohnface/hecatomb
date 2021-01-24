@@ -38,7 +38,11 @@ rule create_viral_seqs_db:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs createdb {input} {output} --shuffle 0 --dbtype 0
+        if [[ -s {input} ]]; then \
+            mmseqs createdb {input} {output} --shuffle 0 --dbtype 0;
+        else \
+            touch {output};
+        fi
         """
 
 rule viral_seqs_tax_search:
