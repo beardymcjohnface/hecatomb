@@ -252,7 +252,7 @@ rule pull_non_phage_seqs:
         os.path.join(AA_OUT, "viruses_seqs.fasta")
     shell:
         """
-        grep --no-group-separator -A 1 -Fwf {input.ls} {input.fa} > {output}
+        cat {input.fa} | {{ grep --no-group-separator -A 1 -Fwf {input.ls} || true; }} > {output}
         """
 
 rule non_phage_seqs_to_tab:
