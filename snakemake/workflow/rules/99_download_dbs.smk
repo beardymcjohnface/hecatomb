@@ -408,6 +408,8 @@ rule download_uniref50:
         os.path.join(PROTPATH, "uniref50.fasta.gz")
     conda: "../envs/curl.yaml"
     params: config["url"]["uniref50"]
+    resources:
+        time_min = 480
     shell:
         """
         curl -Lgo {output} "{params}"
