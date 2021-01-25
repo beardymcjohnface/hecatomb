@@ -89,8 +89,12 @@ rule viral_seqs_convertalis:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs convertalis {input.vqdb} {URVDB} {params.tr} {output} --threads {resources.cpus} \
-        --format-output "query,target,pident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,evalue,bits,qaln,taln"
+        if [[ -s {input.vqdb} ]]; then \
+            mmseqs convertalis {input.vqdb} {URVDB} {params.tr} {output} --threads {resources.cpus} \
+            --format-output "query,target,pident,alnlen,mismatch,gapopen,qstart,qend,tstart,tend,evalue,bits,qaln,taln";
+        else \
+            touch {output};
+        fi;
         """
 
 rule viral_seqs_lca:
@@ -247,7 +251,7 @@ rule pull_nonphage_seqs:
         os.path.join(AA_OUT_CHECKED, "viruses_checked_aa_seqs.fasta")
     shell:
         """
-        grep --no-group-separator -A 1 -Fwf {input.ls} {input.fa} > {output}
+        cat {input.fa} | {{ grep --no-group-separator -A 1 -Fwf {input.ls} || true; }} > {output}
         """
 
 rule nonphage_seqs_to_tab:

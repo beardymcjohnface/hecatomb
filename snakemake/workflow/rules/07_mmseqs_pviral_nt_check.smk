@@ -180,7 +180,11 @@ rule convert_nt_alias:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs convertalis {params.sq} {BVMDB} {params.fh} {output} --threads {resources.cpus}
+        if [[ -s {input.idx} ]]; then \
+            mmseqs convertalis {params.sq} {BVMDB} {params.fh} {output} --threads {resources.cpus};
+        else \
+            touch {output};
+        fi;
         """
 
 rule annotate_checked_nt:
