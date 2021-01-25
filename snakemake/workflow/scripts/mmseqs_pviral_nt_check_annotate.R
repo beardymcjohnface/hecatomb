@@ -6,7 +6,7 @@ library("taxonomizr")
 
 # Read *.m8 file with best hit NCBI accession number
 m8 <- read_tsv(snakemake@input[["fhtbl"]], col_names = FALSE)
-if (file.info(snakemake@input[["fhtbl"]]$size == 0)){
+if (file.info(snakemake@input[["fhtbl"]])$size == 0){
     file.create(snakemake@output[["linout"]])
     quit()
 }
