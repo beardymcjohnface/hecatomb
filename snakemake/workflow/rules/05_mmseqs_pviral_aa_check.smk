@@ -220,11 +220,13 @@ rule nonphages_to_pyloseq_table:
         os.path.join(AA_OUT_CHECKED, "viruses_checked_aa_table.tsv")
     shell:
         """
-        grep -v 'Bacteria;' {input} | \
-            grep 'Viruses;' | \
-            grep -v -f  {PHAGE_LINEAGES} | cut -f1,5 | \
+        cat {input} | \
+            {{ grep -v 'Bacteria;' || true; }} | \
+            {{ grep 'Viruses;' || true; }} | \
+            {{ grep -v -f  {PHAGE_LINEAGES} || true; }} | \
+            cut -f1,5 | \
             sed 's/;/\t/g' | \
-                sort -n -k1 > {output}
+            sort -n -k1 > {output}
         """
 
 rule nonphages_to_pyloseq_list:
@@ -279,7 +281,7 @@ rule non_viral_lineages:
         os.path.join(AA_OUT_CHECKED, "unclassified_checked_aa_seqs.list")
     shell:
         """
-        grep -v 'Viruses;' {input} | cut -f1 | \
+        cat {input} | {{ grep -v 'Viruses;' || true; }} | cut -f1 | \
            sort -n -k1 > {output}
         """
  
@@ -291,6 +293,6 @@ rule pull_non_viral_lineages:
         os.path.join(AA_OUT_CHECKED, "unclassified_checked_aa_seqs.fasta")
     shell:
         """
-        grep --no-group-separator -A 1 -Fwf {input.ls} {input.fa} > {output}
+        cat {input.fa} | {{ grep --no-group-separator -A 1 -Fwf {input.ls} || true; }} > {output}
         """
 

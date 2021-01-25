@@ -154,7 +154,11 @@ rule filter_nt_db:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs filterdb {params.rdb} {params.rfh}  --extract-lines 1 --threads {resources.cpus}
+        if [[ -s {input.dbt} ]]; then \
+            mmseqs filterdb {params.rdb} {params.rfh}  --extract-lines 1 --threads {resources.cpus};
+        else \
+            touch {output}; 
+        fi;
         """
 
 rule convert_nt_alias:
