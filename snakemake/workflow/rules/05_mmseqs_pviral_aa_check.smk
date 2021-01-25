@@ -160,7 +160,7 @@ rule convertalis_vsqd:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        if [[ -s {input.trhdb} ]]; then \
+        if [[ -s {input.trfhdb} ]]; then \
             mmseqs convertalis {input.vqdb} {URVDB} {params.trfh} {output} --threads {resources.cpus};
         else \
             touch {output};
