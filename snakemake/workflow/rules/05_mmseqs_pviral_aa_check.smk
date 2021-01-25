@@ -64,9 +64,13 @@ rule viral_seqs_tax_search:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs taxonomy {input.vqdb} {URVDB} {params.tr} \
-            $(mktemp -d -p {TMPDIR}) --threads {resources.cpus} \
-            -a -s 7 --search-type 2 --tax-output-mode 1
+        if [[ -s {input} ]]; then \
+            mmseqs taxonomy {input.vqdb} {URVDB} {params.tr} \
+                $(mktemp -d -p {TMPDIR}) --threads {resources.cpus} \
+                -a -s 7 --search-type 2 --tax-output-mode 1;
+        else \
+            touch {output};
+        fi;
         """
 
 rule viral_seqs_convertalis:

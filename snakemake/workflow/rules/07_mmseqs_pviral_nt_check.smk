@@ -26,8 +26,10 @@ rule find_nt_phages:
         os.path.join(NT_CHECKED_OUT, "phage_nt_table.tsv")
     shell:
         """
-        tail -n+2 {input} | grep -f {PHAGE_LINEAGES} |  sort -n -k1 \
-                > {output}
+        tail -n+2 {input} \
+            | {{ grep -f {PHAGE_LINEAGES} || true; }} \
+            |  sort -n -k1 \
+            > {output}
         """
 
 rule list_nt_phages:
@@ -58,8 +60,10 @@ rule non_nt_phage_viruses:
         os.path.join(NT_CHECKED_OUT, "pviral_virus_nt_table.tsv")
     shell:
         """
-        tail -n+2 {input} | grep -vf {PHAGE_LINEAGES} |  sort -n -k1 \
-                > {output}
+        tail -n+2 {input} \
+            | {{ grep -vf {PHAGE_LINEAGES} || true; }} \
+            |  sort -n -k1 \
+            > {output}
         """
 
 rule list_non_nt_viruses:
