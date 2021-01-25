@@ -183,10 +183,15 @@ rule create_taxtable_vsqd:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs createtsv {input.vqdb} {params.lcadb} {output} --threads {resources.cpus}
+        if [[ -s {input.lcadb} ]]; then \
+            mmseqs createtsv {input.vqdb} {params.lcadb} {output} --threads {resources.cpus};
+        else \
+            touch {output};
+        fi;
         """
 
 rule create_kraken_vsqd:
+    # TODO should params be input?
     input:
         lcadb = os.path.join(AA_OUT_CHECKED, "lca.db.dbtype")
     params:
@@ -201,7 +206,11 @@ rule create_kraken_vsqd:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs taxonomyreport {URVDB} {params.lcadb} {output} --threads {resources.cpus}
+        if [[ -s {input.lcadb} ]]; then \
+            mmseqs taxonomyreport {URVDB} {params.lcadb} {output} --threads {resources.cpus};
+        else \
+            touch {output};
+        fi;
         """
 
 rule nonphages_to_pyloseq_table:

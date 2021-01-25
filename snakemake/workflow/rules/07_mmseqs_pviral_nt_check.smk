@@ -110,6 +110,7 @@ rule create_nt_db:
         """
 
 rule nt_search_checked:
+    # TODO check if params should be input
     input:
         idx = os.path.join(NT_CHECKED_OUT, "seqtable_queryDB.index"),
         dbt = os.path.join(NT_CHECKED_OUT, "seqtable_queryDB.dbtype")
@@ -127,8 +128,12 @@ rule nt_search_checked:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs search {params.st} {NTDB} {params.rdb} $(mktemp -d -p {TMPDIR}) \
-        -a -e 0.000001 --search-type 3 --cov-mode 2 -c 0.95 --threads {resources.cpus}
+        if [[ -s {params.st} ]]; then \
+            mmseqs search {params.st} {NTDB} {params.rdb} $(mktemp -d -p {TMPDIR}) \
+            -a -e 0.000001 --search-type 3 --cov-mode 2 -c 0.95 --threads {resources.cpus};
+        else \
+            touch {output};
+        fi;
         """
 
 rule filter_nt_db:
