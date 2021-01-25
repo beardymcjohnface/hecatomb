@@ -102,7 +102,11 @@ rule create_nt_db:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs createdb {input} {params.st} --dbtype 2
+        if [[ -s {input} ]]; then \
+            mmseqs createdb {input} {params.st} --dbtype 2;
+        else \
+            touch {output};
+        fi
         """
 
 rule nt_search_checked:

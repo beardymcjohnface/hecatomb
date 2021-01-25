@@ -111,9 +111,13 @@ rule viral_seqs_lca:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs lca {URVDB} {params.tr} {params.ot} \
-        --tax-lineage 1 --threads {resources.cpus} \
-        --lca-ranks "superkingdom,phylum,class,order,family,genus,species"
+        if [[ -s {input.tr} ]]; then \
+            mmseqs lca {URVDB} {params.tr} {params.ot} \
+            --tax-lineage 1 --threads {resources.cpus} \
+            --lca-ranks "superkingdom,phylum,class,order,family,genus,species";
+        else \
+            touch {output};
+        fi;
         """
 
 rule extract_top_hit:
@@ -156,7 +160,11 @@ rule convertalis_vsqd:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs convertalis {input.vqdb} {URVDB} {params.trfh} {output} --threads {resources.cpus}
+        if [[ -s {input.trhdb} ]]; then \
+            mmseqs convertalis {input.vqdb} {URVDB} {params.trfh} {output} --threads {resources.cpus};
+        else \
+            touch {output};
+        fi;
         """
 
 rule create_taxtable_vsqd:
