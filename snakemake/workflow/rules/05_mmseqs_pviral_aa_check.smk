@@ -133,7 +133,11 @@ rule extract_top_hit:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs filterdb {params.tr} {params.fh} --extract-lines 1  --threads {resources.cpus}
+        if [[ -s {input} ]]; then \
+            mmseqs filterdb {params.tr} {params.fh} --extract-lines 1  --threads {resources.cpus};
+        else \
+            touch {output};
+        fi;
         """
 
 rule convertalis_vsqd:

@@ -50,7 +50,7 @@ rule pull_nt_phage_seqs:
         os.path.join(NT_CHECKED_OUT, "phage_nt_seqs.fasta")
     shell:
         """
-        grep --no-group-separator -A 1 -Fwf {input.ls} {input.fa} > {output}
+        cat {input.fa} | {{ grep --no-group-separator -A 1 -Fwf {input.ls} || true; }} > {output}
         """
 
 rule non_nt_phage_viruses:
@@ -84,7 +84,7 @@ rule pull_nt_non_phage_seqs:
         os.path.join(NT_CHECKED_OUT, "pviral_virus_nt_seqs.fasta")
     shell:
         """
-        grep --no-group-separator -A 1 -Fwf {input.ls} {input.fa} > {output}
+        cat {input.fa} | {{ grep --no-group-separator -A 1 -Fwf {input.ls} || true; }} > {output}
         """
 
 rule create_nt_db:
