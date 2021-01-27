@@ -26,6 +26,7 @@ parser = argparse.ArgumentParser(description='Command line options:')
 parser.add_argument('command', choices=['install', 'config', 'run'])
 parser.add_argument('--config', help='config file name', default='config.yaml')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
+parser.add_argument('--unlock', action="store_true")
 args = parser.parse_args()
 
 
@@ -77,6 +78,8 @@ def install():
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_databases.smk'))
     confFile = os.path.normpath(os.path.join(SNEKDIR, 'config/install_config.yaml'))
     runCommand = f'snakemake -s {snekFile} {runJobs} --configfile {confFile} --config db={DBDIR} tmp=tmp'
+    if args.unlock:
+        subprocess.call(f'{runCommand} --unlock'.split())
     if subprocess.call(runCommand.split())==0:
         sys.stderr.write("Database installation finished successfully\n")
     else:
@@ -124,6 +127,8 @@ def run():
         else:
             runJobs = '-j 16'
         runCommand = f'snakemake -s {snekFile} {runJobs} --configfile {args.config} --config Databases={DBDIR}'
+        if args.unlock:
+            subprocess.call(f'{runCommand} --unlock'.split())
         if subprocess.call(runCommand.split()) == 0:
             sys.stderr.write("Hecatomb finished successfully\n")
         else:
