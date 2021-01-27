@@ -76,4 +76,6 @@ databases/contaminants/
 databases/human_masked/
 clumped/
 QC/
+snakemake/config/slurm.yaml
+snakemake/config/sge.yaml
 
