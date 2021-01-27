@@ -32,15 +32,21 @@ parser.add_argument('--snake',
 args = parser.parse_args()
 
 
+# Snakemake run command + additional args
 runSnake = 'snakemake '
 if args.snake:
     runSnake = runSnake + ' '.join(c for c in args.snake)
 
 
+# directories of hecatombs installation etc
 BINDIR = os.path.dirname(os.path.realpath(__file__))
 SNEKDIR = os.path.normpath(os.path.join(BINDIR, '../snakemake'))
 DBDIR = os.path.normpath(os.path.join(BINDIR, '../databases'))
 EDITOR = os.environ.get('EDITOR','nano')
+
+
+# misc files
+clustConf = os.path.join(SNEKDIR, f'config/{cluster}.yaml')
 
 
 def initialiseCluster(cluster):
@@ -49,8 +55,6 @@ def initialiseCluster(cluster):
     :param cluster: args.cluster, either 'slurm' or 'sge'
     :return:
     """
-    clustSampleConf = os.path.join(SNEKDIR, f'config/sample_{cluster}.yaml')
-    clustConf = os.path.join(SNEKDIR, f'config/{cluster}.yaml')
     if pathlib.Path(clustConf).is_file():
         sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
         sys.stderr.write(f'Do you need to update the {cluster} profile before continuing? [y/N]: ')
@@ -58,6 +62,7 @@ def initialiseCluster(cluster):
         if 'y' in YN or 'Y' in YN:
             call([EDITOR, clustConf])
     else:
+        clustSampleConf = os.path.join(SNEKDIR, f'config/sample_{cluster}.yaml')
         copyfile(clustSampleConf, clustConf)
         sys.stderr.write(f"Created a {cluster}.yaml profile in {SNEKDIR}\n")
         sys.stderr.write("\n--------------------\n\n")
