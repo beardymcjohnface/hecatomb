@@ -45,16 +45,13 @@ DBDIR = os.path.normpath(os.path.join(BINDIR, '../databases'))
 EDITOR = os.environ.get('EDITOR','nano')
 
 
-# misc files
-clustConf = os.path.join(SNEKDIR, f'config/{args.cluster}.yaml')
-
-
 def initialiseCluster(cluster):
     """
     Initialise the slurm or sge profile yaml file for running hecatomb on a cluster
     :param cluster: args.cluster, either 'slurm' or 'sge'
     :return:
     """
+    clustConf = os.path.join(f'~/.config/{args.cluster}.yaml')
     if pathlib.Path(clustConf).is_file():
         sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
         sys.stderr.write(f'Do you need to update the {cluster} profile before continuing? [y/N]: ')
@@ -83,7 +80,7 @@ def install():
     :return:
     """
     if args.cluster:
-        runJobs = f'--profile {clustConf}'
+        runJobs = f'--profile {args.cluster}'
     else:
         runJobs = '-j 16'
     sys.stderr.write("Checking and downloading database files\n")
@@ -133,7 +130,7 @@ def run():
         sys.stderr.write("Running Hecatomb\n")
         snekFile = os.path.normpath(os.path.join(SNEKDIR, 'Snakefile'))
         if args.cluster:
-            runJobs = f'--profile {clustConf}'
+            runJobs = f'--profile {args.cluster}'
         else:
             runJobs = '-j 16'
         runCommand = f'{runSnake} -s {snekFile} {runJobs} --configfile {args.config} --config Databases={DBDIR}'
