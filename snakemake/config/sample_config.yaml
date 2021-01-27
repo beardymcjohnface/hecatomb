@@ -1,9 +1,6 @@
-#---
 Paths:
-  # The Reads directory has your input fastq files that you want
-  # to process through hecatomb
+  # The Reads directory has your input fastq files that you want to process through hecatomb
   Reads: test_data/fastq
-
 
 # Temporary directory.
 Temp: tmp
@@ -12,25 +9,19 @@ Logs: logs
 # The Database directory, UNCOMMENT AND UPDATE ONLY IF YOU WANT TO MANUALLY RUN THE SNAKEMAKE PIPELINES
 #Databases: databases
 
-
 DatabaseFiles:
-  # These are our predefined databases that we screen against
-  # You may want to replace host with e.g. mouse
+  # Predefined databases for screening. You may want to replace host with e.g. mouse
   bacteria: bac_uniquespecies_giant.masked_Ns_removed.fasta
   contaminants: vector_contaminants.fa.gz
   host: human_virus_masked.fasta
   #host: mouse_virus_masked.fasta
   #host: other_virus_masked.fasta
 
-
 Options:
-  # These are options that control the flow of the pipeline and add additional
-  # processing steps. Set these to True to include them or False to ignore them
   # run_prinseq first cleans the reads with prinseq++
   run_prinseq: True
   # use_bowtie substitutes bowtie2 and samtools for bbmap
   use_bowtie: True
-
 
 Output:
   # Clumped is where the clumpify output of the original reads is written. QC is the output for all the QC steps
@@ -38,9 +29,6 @@ Output:
   QC: QC
   Results: results
 
-
 System:
   # How much memory you want to allocate to java
   Memory: -Xmx128g
-
-

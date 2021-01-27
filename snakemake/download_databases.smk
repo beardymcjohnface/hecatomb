@@ -20,7 +20,7 @@ if not config:
 # Directory paths
 DBDIR = config['db']
 TMPDIR = config['tmp']
-LOG = config["Paths"]["logs"]
+LOG = config["Paths"]["Logs"]
 # paths for our databases
 BACPATH  = os.path.join(DBDIR, "bac_giant_unique_species")
 HOSTPATH = os.path.join(DBDIR, "human_masked")
