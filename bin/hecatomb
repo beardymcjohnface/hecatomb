@@ -46,7 +46,7 @@ EDITOR = os.environ.get('EDITOR','nano')
 
 
 # misc files
-clustConf = os.path.join(SNEKDIR, f'config/{cluster}.yaml')
+clustConf = os.path.join(SNEKDIR, f'config/{args.cluster}.yaml')
 
 
 def initialiseCluster(cluster):
