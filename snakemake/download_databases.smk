@@ -18,8 +18,9 @@ if not config:
 
 
 # Directory paths
-DBDIR = config['Paths']['Databases']
-TMPDIR = config['Paths']['Temp']
+DBDIR = config['db']
+TMPDIR = config['tmp']
+LOG = config["Paths"]["logs"]
 # paths for our databases
 BACPATH  = os.path.join(DBDIR, "bac_giant_unique_species")
 HOSTPATH = os.path.join(DBDIR, "human_masked")
@@ -30,8 +31,9 @@ NUCLPATH = os.path.join(DBDIR, "nucleotides")
 URVPATH = os.path.join(PROTPATH, "uniref_plus_virus") # uniref50 + viruses
 
 
+
 # create directories
-for DIR in [DBDIR, TMPDIR, BACPATH, HOSTPATH, CONPATH, PROTPATH, TAXPATH, NUCLPATH, URVPATH]:
+for DIR in [DBDIR, TMPDIR, BACPATH, HOSTPATH, CONPATH, PROTPATH, TAXPATH, NUCLPATH, URVPATH, LOG]:
     if not os.path.exists(DIR):
         os.mkdir(DIR)
 
@@ -41,20 +43,20 @@ include: "rules/99_download_dbs.smk"
 
 
 ## bowtie vs bbmap databases
-inputs = []
-if config['Options']['use_bowtie']:
-    inputs = [
-        expand(os.path.join(BACPATH, "bac_uniquespecies_giant.masked_Ns_removed.{n}.bt2l"), n=[1,2,3,4]),
-        expand(os.path.join(HOSTPATH, "human_virus_masked.{n}.bt2l"), n=[1,2,3,4]),
-        expand(os.path.join(CONPATH, "line_sine.{n}.bt2"), n=[1,2,3,4]),
-        expand(os.path.join(CONPATH, "line_sine.rev.{m}.bt2"), m=[1,2])
-    ]
-else:
-    inputs = [
-        os.path.join(BACPATH, "ref"),
-        os.path.join(HOSTPATH, "ref"),
-        os.path.join(CONPATH, "line_sine.fasta")
-    ]
+# inputs = []
+# if config['Options']['use_bowtie']:
+inputs = [
+    expand(os.path.join(BACPATH, "bac_uniquespecies_giant.masked_Ns_removed.{n}.bt2l"), n=[1,2,3,4]),
+    expand(os.path.join(HOSTPATH, "human_virus_masked.{n}.bt2l"), n=[1,2,3,4]),
+    expand(os.path.join(CONPATH, "line_sine.{n}.bt2"), n=[1,2,3,4]),
+    expand(os.path.join(CONPATH, "line_sine.rev.{m}.bt2"), m=[1,2])
+]
+# else:
+#     inputs = [
+#         os.path.join(BACPATH, "ref"),
+#         os.path.join(HOSTPATH, "ref"),
+#         os.path.join(CONPATH, "line_sine.fasta")
+#     ]
 
 
 rule all:

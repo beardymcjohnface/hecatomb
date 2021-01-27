@@ -6,6 +6,6 @@ default-resources: [cpus=1, mem_mb=2000]
 keep-going: True
 
 # slurm settings
-cluster: "sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs_slurm/{rule}_{jobid}.out -e logs_slurm/{rule}_{jobid}.err "
+cluster: "sbatch -t {resources.time_min} --mem={resources.mem_mb} -c {resources.cpus} -o logs/{rule}_{jobid}.out -e logs/{rule}_{jobid}.err "
 latency-wait: 60
 local-cores: 8

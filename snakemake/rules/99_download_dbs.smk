@@ -76,24 +76,24 @@ rule download_nucleotide_databases:
 #         "tar -C {DBDIR} -xf {input}"
 
 
-rule make_bac_databases:
-    """
-    Generate bacteria bbmap index
-    """
-    input:
-        os.path.join(BACPATH, config['DatabaseFiles']['bacteria'])
-    output:
-        directory(os.path.join(BACPATH, "ref"))
-    params:
-        wd = BACPATH,
-        fa = config['DatabaseFiles']['bacteria']
-    resources:
-        mem_mb=50000,
-        cpus=16
-    conda:
-        "../envs/bbmap.yaml"
-    shell:
-        "cd {params.wd} && bbmap.sh -Xmx{resources.mem_mb}m threads={resources.cpus} ref={params.fa}"
+# rule make_bac_databases:
+#     """
+#     Generate bacteria bbmap index
+#     """
+#     input:
+#         os.path.join(BACPATH, config['DatabaseFiles']['bacteria'])
+#     output:
+#         directory(os.path.join(BACPATH, "ref"))
+#     params:
+#         wd = BACPATH,
+#         fa = config['DatabaseFiles']['bacteria']
+#     resources:
+#         mem_mb=50000,
+#         cpus=16
+#     conda:
+#         "../envs/bbmap.yaml"
+#     shell:
+#         "cd {params.wd} && bbmap.sh -Xmx{resources.mem_mb}m threads={resources.cpus} ref={params.fa}"
 
 
 rule make_bac_bt_idx:
@@ -119,26 +119,27 @@ rule make_bac_bt_idx:
         "cd {params.wd} && bowtie2-build --threads {resources.cpus} --large-index {params.fa} {params.bt}"
 
 
-rule make_host_databases:
-    """
-    Generate host bbmap index
-    """
-    input:
-        os.path.join(HOSTPATH, config['DatabaseFiles']['host'])
-    output:
-        directory(os.path.join(HOSTPATH, "ref"))
-    params:
-        wd = HOSTPATH,
-        fa = config['DatabaseFiles']['host']
-    resources:
-        mem_mb=50000,
-        cpus=16
-    conda:
-        "../envs/bbmap.yaml"
-    shell:
-        "cd {params.wd} && bbmap.sh -Xmx{resources.mem_mb}m threads={resources.cpus} ref={params.fa}"
+# rule make_host_databases:
+#     """
+#     Generate host bbmap index
+#     """
+#     input:
+#         os.path.join(HOSTPATH, config['DatabaseFiles']['host'])
+#     output:
+#         directory(os.path.join(HOSTPATH, "ref"))
+#     params:
+#         wd = HOSTPATH,
+#         fa = config['DatabaseFiles']['host']
+#     resources:
+#         mem_mb=50000,
+#         cpus=16
+#     conda:
+#         "../envs/bbmap.yaml"
+#     shell:
+#         "cd {params.wd} && bbmap.sh -Xmx{resources.mem_mb}m threads={resources.cpus} ref={params.fa}"
 
 
+# TODO we might need to move this to the main pipeline in order to allow easier customisation of host genome
 rule make_host_bt_idx:
     """
     Generate host bowtie2 index

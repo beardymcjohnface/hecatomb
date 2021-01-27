@@ -11,6 +11,7 @@ Michael Roach, Jan 2020
 import argparse
 import sys
 import os
+import subprocess
 import pathlib
 import time
 from shutil import copyfile
@@ -30,6 +31,7 @@ args = parser.parse_args()
 
 BINDIR = pathlib.Path(__file__).parent.absolute()
 SNEKDIR = os.path.normpath(os.path.join(BINDIR, '../snakemake'))
+DBDIR = os.path.normpath(os.path.join(BINDIR, '../databases'))
 EDITOR = os.environ.get('EDITOR','nano')
 
 
@@ -40,24 +42,21 @@ def initialiseCluster(cluster):
     :return:
     """
     clustSampleConf = os.path.join(BINDIR, f'../snakemake/config/sample_{cluster}.yaml')
-    clustConf = os.path.join(SNEKDIR, f'{cluster}.yaml')
+    clustConf = os.path.join(SNEKDIR, f'/config/{cluster}.yaml')
     if pathlib.Path(clustConf).is_file():
-        sys.stderr.write(f"Using {cluster} profile {clustConf}\n")
+        sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
     else:
         copyfile(clustSampleConf, clustConf)
-        sys.stderr.write(f"Created {cluster}.yaml profile in {SNEKDIR}\n")
-    sys.stderr.write("\n--------------------\n\n")
-    f = open(clustConf, 'r')
-    for line in f:
-        sys.stderr.write(line)
-    f.close()
-    sys.stderr.write(f"\n\n--------------------\n\nEdit {cluster}.yaml in nano before continuing? [y/N]: ")
-    YN = input()
-    if 'y' in YN or 'Y' in YN:
-        call([EDITOR, clustConf])
-
-
-initialiseCluster(args.cluster)
+        sys.stderr.write(f"Created a {cluster}.yaml profile in {SNEKDIR}\n")
+        sys.stderr.write("\n--------------------\n\n")
+        f = open(clustConf, 'r')
+        for line in f:
+            sys.stderr.write(line)
+        f.close()
+        sys.stderr.write(f"\n\n--------------------\n\nEdit {cluster}.yaml in nano before continuing? [y/N]: ")
+        YN = input()
+        if 'y' in YN or 'Y' in YN:
+                call([EDITOR, clustConf])
 
 
 # Functions for installing and running hecatomb
@@ -66,7 +65,18 @@ def install():
     The install function. This will run the download and install database snakemake pipeline.
     :return:
     """
+    if asrgs.cluster:
+        runJobs = f'--profile {args.cluster}'
+    else:
+        runJobs = '-j 16'
     sys.stderr.write("Checking database files\n")
+    snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_dbs.smk'))
+    confFile = os.path.normpath(os.path.join(SNEKDIR, 'config/install_config.yaml'))
+    runCommand = f'snakemake -s {snekFile} {runJobs} --configfile "{confFile}" --config db="{DBDIR}" tmp="tmp"'
+    if subprocess.call(runCommand)==0:
+        sys.stderr.write("Database installation finished successfully\n")
+    else:
+        sys.stderr.write("ERROR: Database installation failed\n")
 
 
 def config():
@@ -76,6 +86,24 @@ def config():
     :return:
     """
     sys.stderr.write("Generating a configuration file\n")
+    configFile = os.path.normpath(os.path.join(os.getcwd(), 'config.yaml'))
+    sampleConfig = os.path.normpath(os.path.join(SNEKDIR, 'config/sample_config.yaml'))
+    if pathlib.Path(configFile).is_file():
+        sys.stderr.write(f'found config file {configFile}\n')
+    else:
+        copyfile(sampleConfig, configFile)
+        sys.stderr.write(f'created template config file {configFile}\n')
+    sys.stderr.write("\n--------------------\n\n")
+    f = open(configFile, 'r')
+    for line in f:
+        sys.stderr.write(line)
+    f.close()
+    sys.stderr.write(f"\n\n--------------------\n\nEdit config file in nano before continuing? [y/N]: ")
+    YN = input()
+    if 'y' in YN or 'Y' in YN:
+        call([EDITOR, configFile])
+    sys.stderr.write("Configuration file created. Replace 'test_data/fastq' with the directory containing your " \
+                     "sequencing data (named like so: {sample}.R1/R2.fastq.gz)\n")
 
 
 def run():
@@ -83,13 +111,30 @@ def run():
     The run function. This will run the hecatome snakemake pipeline itself.
     :return:
     """
-    sys.stderr.write("Running Hecatomb\n")
+    if not pathlib.Path(args.config).is_file():
+        sys.stderr.write(f'ERROR: missing configuration file {args.config}. Please run "hecatomb config" to ' \
+                         f'create a configuration file.\n')
+    else:
+        sys.stderr.write("Running Hecatomb\n")
+        snekFile = os.path.normpath(os.path.join(SNEKDIR, 'Snakefile'))
+        if asrgs.cluster:
+            runJobs = f'--profile {args.cluster}'
+        else:
+            runJobs = '-j 16'
+        runCommand = f'snakemake -s {snekFile} {runJobs} --configfile "{args.config}" --config Databases="{DBDIR}"'
+        if subprocess.call(runCommand) == 0:
+            sys.stderr.write("Hecatomb finished successfully\n")
+        else:
+            sys.stderr.write("ERROR: Hecatomb  run failed\n")
 
 
 # Run the program
+if asrgs.cluster:
+    initialiseCluster(args.cluster)
+
 commands = {'install':install, 'config':config, 'run':run}
 commands[args.command]()
 
-time.sleep(2)
+time.sleep(1)
 
 

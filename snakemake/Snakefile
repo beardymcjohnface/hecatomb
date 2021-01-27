@@ -30,7 +30,8 @@ if not config:
     sys.exit()
 
 
-DBDIR = config['Paths']['Databases']
+#DBDIR = config['Paths']['Databases']
+DBDIR = config['Databases']
 
 # paths for our databases
 BACPATH = os.path.join(DBDIR, "bac_giant_unique_species")
@@ -45,9 +46,12 @@ READDIR = config['Paths']['Reads']
 CLUMPED = config['Output']["Clumped"]
 QC = config['Output']['QC']
 RESULTS = config['Output']['Results']
-TMPDIR = config['Paths']['Temp']
+TMPDIR = config['Temp']
 if not os.path.exists(TMPDIR):
     os.makedirs(TMPDIR, exist_ok=True)
+LOGDIR = config['Logs']
+if not os.path.exists(LOGDIR):
+    os.makedirs(LOGDIR, exist_ok=True)
 
 
 fatal_errors = False
