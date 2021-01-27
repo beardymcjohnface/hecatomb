@@ -76,7 +76,7 @@ def install():
     sys.stderr.write("Checking and downloading database files\n")
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_databases.smk'))
     confFile = os.path.normpath(os.path.join(SNEKDIR, 'config/install_config.yaml'))
-    runCommand = f'snakemake -s {snekFile} {runJobs} --configfile "{confFile}" --config db="{DBDIR}" tmp="tmp"'
+    runCommand = f'snakemake -s {snekFile} {runJobs} --configfile {confFile} --config db={DBDIR} tmp=tmp'
     if subprocess.call(runCommand.split())==0:
         sys.stderr.write("Database installation finished successfully\n")
     else:
