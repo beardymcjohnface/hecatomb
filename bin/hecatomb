@@ -26,8 +26,15 @@ parser = argparse.ArgumentParser(description='Command line options:')
 parser.add_argument('command', choices=['install', 'config', 'run'])
 parser.add_argument('--config', help='config file name', default='config.yaml')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
-parser.add_argument('--unlock', action="store_true")
+parser.add_argument('--snake',
+                    help='Pass one or more commands to Snakemake e.g. --snake=--unlock --snake="--report out.html" --snake=-n',
+                    action="append")
 args = parser.parse_args()
+
+
+runSnake = 'snakemake '
+if args.snake:
+    runSnake = runSnake + ' '.join(c for c in args.snake)
 
 
 BINDIR = os.path.dirname(os.path.realpath(__file__))
@@ -71,15 +78,13 @@ def install():
     :return:
     """
     if args.cluster:
-        runJobs = f'--profile {args.cluster}'
+        runJobs = f'--profile {clustConf}'
     else:
         runJobs = '-j 16'
     sys.stderr.write("Checking and downloading database files\n")
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_databases.smk'))
     confFile = os.path.normpath(os.path.join(SNEKDIR, 'config/install_config.yaml'))
-    runCommand = f'snakemake -s {snekFile} {runJobs} --configfile {confFile} --config db={DBDIR} tmp=tmp'
-    if args.unlock:
-        subprocess.call(f'{runCommand} --unlock'.split())
+    runCommand = f'{runSnake} -s {snekFile} {runJobs} --configfile {confFile} --config db={DBDIR} tmp=tmp'
     if subprocess.call(runCommand.split())==0:
         sys.stderr.write("Database installation finished successfully\n")
     else:
@@ -123,10 +128,10 @@ def run():
         sys.stderr.write("Running Hecatomb\n")
         snekFile = os.path.normpath(os.path.join(SNEKDIR, 'Snakefile'))
         if args.cluster:
-            runJobs = f'--profile {args.cluster}'
+            runJobs = f'--profile {clustConf}'
         else:
             runJobs = '-j 16'
-        runCommand = f'snakemake -s {snekFile} {runJobs} --configfile {args.config} --config Databases={DBDIR}'
+        runCommand = f'{runSnake} -s {snekFile} {runJobs} --configfile {args.config} --config Databases={DBDIR}'
         if args.unlock:
             subprocess.call(f'{runCommand} --unlock'.split())
         if subprocess.call(runCommand.split()) == 0:
