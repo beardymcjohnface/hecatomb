@@ -45,6 +45,10 @@ def initialiseCluster(cluster):
     clustConf = os.path.join(SNEKDIR, f'config/{cluster}.yaml')
     if pathlib.Path(clustConf).is_file():
         sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
+        sys.stderr.write(f'Do you need to update the {cluster} profile before continuing? [y/N]: ')
+        YN = input()
+        if 'y' in YN or 'Y' in YN:
+            call([EDITOR, clustConf])
     else:
         copyfile(clustSampleConf, clustConf)
         sys.stderr.write(f"Created a {cluster}.yaml profile in {SNEKDIR}\n")
@@ -56,7 +60,7 @@ def initialiseCluster(cluster):
         sys.stderr.write(f"\n\n--------------------\n\nEdit {cluster}.yaml in nano before continuing? [y/N]: ")
         YN = input()
         if 'y' in YN or 'Y' in YN:
-                call([EDITOR, clustConf])
+            call([EDITOR, clustConf])
 
 
 # Functions for installing and running hecatomb
@@ -103,8 +107,8 @@ def config():
     YN = input()
     if 'y' in YN or 'Y' in YN:
         call([EDITOR, configFile])
-    sys.stderr.write("Configuration file created. Replace 'test_data/fastq' with the directory containing your " \
-                     "sequencing data.\nSequencing read files should be named like so: {sample}.R1/R2.fastq.gz\n")
+    sys.stderr.write("\nConfiguration file created!\nReplace 'test_data/fastq' with the directory containing your " \
+                     "sequencing data.\nSequencing read files should be named like so: {sample}_{R1/R2}.fastq.gz\n\n")
 
 
 def run():
