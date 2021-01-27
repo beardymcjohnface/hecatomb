@@ -69,7 +69,7 @@ def install():
     The install function. This will run the download and install database snakemake pipeline.
     :return:
     """
-    if asrgs.cluster:
+    if args.cluster:
         runJobs = f'--profile {args.cluster}'
     else:
         runJobs = '-j 16'
@@ -119,7 +119,7 @@ def run():
     if pathlib.Path(args.config).is_file():
         sys.stderr.write("Running Hecatomb\n")
         snekFile = os.path.normpath(os.path.join(SNEKDIR, 'Snakefile'))
-        if asrgs.cluster:
+        if args.cluster:
             runJobs = f'--profile {args.cluster}'
         else:
             runJobs = '-j 16'
