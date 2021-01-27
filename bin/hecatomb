@@ -51,7 +51,7 @@ def initialiseCluster(cluster):
     :param cluster: args.cluster, either 'slurm' or 'sge'
     :return:
     """
-    clustConf = os.path.join(f'~/.config/{args.cluster}.yaml')
+    clustConf = os.path.join(f'~/.config/snakemake/{args.cluster}.yaml')
     if pathlib.Path(clustConf).is_file():
         sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
         sys.stderr.write(f'Do you need to update the {cluster} profile before continuing? [y/N]: ')
