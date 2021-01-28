@@ -150,11 +150,11 @@ rule remove_bacteria:
     Step 8: Remove bacterial contaminants reserving viral and ambiguous sequences
     """
     input:
-        r1 = temp(os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq")),
-        r2 = temp(os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq")),
-        s = temp(os.path.join(QC, "step_6", '{sample}_singletons.s6.out.fastq'))
+        r1 = os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq"),
+        r2 = os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq"),
+        s = os.path.join(QC, "step_6", '{sample}_singletons.s6.out.fastq')
     output:
-        os.path.join(QC, "step_7", '{sample}.bacteria.bam')
+        temp(os.path.join(QC, "step_7", '{sample}.bacteria.bam'))
     params:
         idx = BACBT2
     benchmark:
