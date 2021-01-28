@@ -200,6 +200,6 @@ rule annotate_checked_nt:
     conda:
         "../envs/R.yaml"
     script:
-        "../scripts/mmseqs_pviral_nt_check_annotate.R"
+        "../scripts/mmseqs_pviral_nt_annotate.R"
 
 
