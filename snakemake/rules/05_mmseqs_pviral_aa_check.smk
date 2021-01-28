@@ -58,7 +58,7 @@ rule viral_seqs_tax_search:
     params:
         tr = os.path.join(AA_OUT_CHECKED, "taxonomyResult")
     resources:
-        mem_mb=100000,
+        mem_mb=128000,
         cpus=16
     conda:
         "../envs/mmseqs2.yaml"
@@ -67,7 +67,7 @@ rule viral_seqs_tax_search:
         if [[ -s {input} ]]; then \
             mmseqs taxonomy {input.vqdb} {URVDB} {params.tr} \
                 $(mktemp -d -p {TMPDIR}) --threads {resources.cpus} \
-                -a -s 7 --search-type 2 --tax-output-mode 1;
+                -a -s 7 --search-type 2 --tax-output-mode 1 --split-memory-limit {resources.mem_mb}M;
         else \
             touch {output};
         fi;
