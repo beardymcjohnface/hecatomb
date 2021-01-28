@@ -72,7 +72,7 @@ def initialiseCluster(cluster):
     :param cluster: args.cluster, either 'slurm' or 'sge'
     :return:
     """
-    clustConf = os.path.join(f'~/.config/snakemake/{args.cluster}/config.yaml')
+    clustConf = os.path.expanduser(f'~/.config/snakemake/{args.cluster}/config.yaml')
     if pathlib.Path(clustConf).is_file():
         sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
         sys.stderr.write(f'Do you need to update the {cluster} profile before continuing? [y/N]: ')
@@ -81,8 +81,10 @@ def initialiseCluster(cluster):
             call([EDITOR, clustConf])
     else:
         clustSampleConf = os.path.join(SNEKDIR, f'config/sample_{cluster}.yaml')
+        clustConfDest = os.path.dirname(clustConf)
+        pathlib.Path(clustConfDest).mkdir(parents=True, exist_ok=True)
         copyfile(clustSampleConf, clustConf)
-        sys.stderr.write(f"Created a {cluster}.yaml profile in {SNEKDIR}\n")
+        sys.stderr.write(f"Created a config.yaml profile for {args.cluster} in {clustConfDest}\n")
         sys.stderr.write("\n--------------------\n\n")
         f = open(clustConf, 'r')
         for line in f:
