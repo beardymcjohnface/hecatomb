@@ -18,17 +18,38 @@ from shutil import copyfile
 from subprocess import call
 
 
-sys.stderr.write("Hecatomb v0.1.0\n")
+sys.stderr.write("\nHecatomb v0.1.0\n\n")
 
 
 # parse the command line arguments
-parser = argparse.ArgumentParser(description='Command line options:')
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    epilog='''
+HELP:
+Download and install the Databases (you only have to do this once): 
+hecatomb install
+
+To run hecatomb, first create a template config file:
+hecatomb config
+
+Then, edit the config file and run hecatomb:
+hecatomb run
+
+To run hecatomb on a HPC cluster (slurm or sge):
+hecatomb [install/run] --cluster slurm
+
+The Hecatomb pipeline is powered by Snakemake; pass additional arguments to Snakemake like so:
+hecatomb [install/run] --snake=--dry-run
+hecatomb [install/run] --snake=--unlock --snake="--report out.html" --snake=--touch
+hecatomb [install/run] --snake="--force --cleanup-metadata seqtable.fasta"
+'''
+)
 parser.add_argument('command', choices=['install', 'config', 'run'])
-parser.add_argument('--config', help='config file name', default='config.yaml')
+parser.add_argument('--config', help='Config file name', default='config.yaml')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
 parser.add_argument('--snake',
-                    help='Pass one or more commands to Snakemake e.g. --snake=--unlock --snake="--report out.html" --snake=-n',
-                    action="append")
+                    help='Pass one or more commands to Snakemake e.g. --snake=--unlock',
+                    action='append')
 args = parser.parse_args()
 
 
@@ -51,7 +72,7 @@ def initialiseCluster(cluster):
     :param cluster: args.cluster, either 'slurm' or 'sge'
     :return:
     """
-    clustConf = os.path.join(f'~/.config/snakemake/{args.cluster}.yaml')
+    clustConf = os.path.join(f'~/.config/snakemake/{args.cluster}/config.yaml')
     if pathlib.Path(clustConf).is_file():
         sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
         sys.stderr.write(f'Do you need to update the {cluster} profile before continuing? [y/N]: ')
@@ -99,24 +120,23 @@ def config():
     paths to database files etc. properly resolved.
     :return:
     """
-    configFile = os.path.normpath(os.path.join(os.getcwd(), 'config.yaml'))
     sampleConfig = os.path.normpath(os.path.join(SNEKDIR, 'config/sample_config.yaml'))
-    if pathlib.Path(configFile).is_file():
-        sys.stderr.write(f'Found config file {configFile}\n')
+    if pathlib.Path(args.config).is_file():
+        sys.stderr.write(f'Found config file {args.config}\n')
     else:
         sys.stderr.write("Generating a configuration file\n")
         time.sleep(1)
-        copyfile(sampleConfig, configFile)
-        sys.stderr.write(f'created template config file {configFile}\n')
+        copyfile(sampleConfig, args.config)
+        sys.stderr.write(f'created template config file {args.config}\n')
     sys.stderr.write("\n--------------------\n")
-    f = open(configFile, 'r')
+    f = open(args.config, 'r')
     for line in f:
         sys.stderr.write(line)
     f.close()
     sys.stderr.write(f"\n--------------------\n\nEdit config file in nano before continuing? [y/N]: ")
     YN = input()
     if 'y' in YN or 'Y' in YN:
-        call([EDITOR, configFile])
+        call([EDITOR, args.config])
     sys.stderr.write("\nConfiguration file created!\nReplace 'test_data/fastq' with the directory containing your " \
                      "sequencing data.\nSequencing read files should be named like so: {sample}_{R1/R2}.fastq.gz\n\n")
 
@@ -134,8 +154,6 @@ def run():
         else:
             runJobs = '-j 16'
         runCommand = f'{runSnake} -s {snekFile} {runJobs} --configfile {args.config} --config Databases={DBDIR}'
-        if args.unlock:
-            subprocess.call(f'{runCommand} --unlock'.split())
         if subprocess.call(runCommand.split()) == 0:
             sys.stderr.write("Hecatomb finished successfully\n")
         else:
