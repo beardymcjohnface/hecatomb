@@ -15,7 +15,7 @@ rule remove_exact_dups:
     input:
         os.path.join(QC, "step_9", PATTERN_R1 + ".viral_amb.fastq")
     output:
-        os.path.join(QC, "step_10", PATTERN_R1 + ".s9.deduped.out.fastq")
+        temp(os.path.join(QC, "step_10", PATTERN_R1 + ".s9.deduped.out.fastq"))
     benchmark:
         "benchmarks/remove_exact_dups_{sample}.txt"
     resources:
@@ -38,8 +38,8 @@ rule deduplicate:
     input:
         os.path.join(QC, "step_10", PATTERN_R1 + ".s9.deduped.out.fastq")
     output:
-        fa = os.path.join(QC, "step_11", PATTERN_R1 + ".best.fasta"),
-        stats = os.path.join(QC, "step_11", "{sample}_stats.txt")
+        fa = temp(os.path.join(QC, "step_11", PATTERN_R1 + ".best.fasta")),
+        stats = temp(os.path.join(QC, "step_11", "{sample}_stats.txt"))
     benchmark:
         "benchmarks/deduplicate_{sample}.txt"
     resources:
@@ -62,7 +62,7 @@ rule extract_seq_counts:
     input:
         os.path.join(QC, "step_11", PATTERN_R1 + ".best.fasta")
     output:
-        os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta")
+        temp(os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta"))
     benchmark:
         "benchmarks/extract_seq_counts_{sample}.txt"
     resources:

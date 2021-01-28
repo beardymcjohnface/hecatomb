@@ -139,8 +139,14 @@ def config():
     YN = input()
     if 'y' in YN or 'Y' in YN:
         call([EDITOR, args.config])
-    sys.stderr.write("\nConfiguration file created!\nReplace 'test_data/fastq' with the directory containing your " \
-                     "sequencing data.\nSequencing read files should be named like so: {sample}_{R1/R2}.fastq.gz\n\n")
+    sys.stderr.write("""
+
+Configuration file created!
+
+Replace 'test_data/fastq' with the directory containing your sequencing data.
+Sequencing read files should be named like so: {sample}_{R1/R2}.fastq.gz
+
+""")
 
 
 def run():

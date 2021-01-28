@@ -19,8 +19,8 @@ rule remove_leftmost_primerB:
         r2 = remove_leftmost_primerB_r2_input,
         primers = os.path.join(CONPATH, "primerB.fa")
     output:
-        r1 = os.path.join(QC, "step_1", PATTERN_R1 + ".s1.out.fastq"),
-        r2 = os.path.join(QC, "step_1", PATTERN_R2 + ".s1.out.fastq"),
+        r1 = temp(os.path.join(QC, "step_1", PATTERN_R1 + ".s1.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_1", PATTERN_R2 + ".s1.out.fastq")),
         stats = os.path.join(QC, "step_1", "{sample}.s1.stats.txt")
     benchmark:
         "benchmarks/removeprimerB_{sample}.txt"
@@ -49,8 +49,8 @@ rule remove_3prime_contaminant:
         r2 = os.path.join(QC, "step_1", PATTERN_R2 + ".s1.out.fastq"),
         primers = os.path.join(CONPATH, "rc_primerB_ad6.fa")
     output:
-        r1 = os.path.join(QC, "step_2", PATTERN_R1 + ".s2.out.fastq"),
-        r2 = os.path.join(QC, "step_2", PATTERN_R2 + ".s2.out.fastq"),
+        r1 = temp(os.path.join(QC, "step_2", PATTERN_R1 + ".s2.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_2", PATTERN_R2 + ".s2.out.fastq")),
         stats = os.path.join(QC, "step_2", "{sample}.s2.stats.txt")
     benchmark:
         "benchmarks/remove_3prime_contaminant_{sample}.txt"
@@ -78,8 +78,8 @@ rule remove_primer_free_adapter:
         r2 = os.path.join(QC, "step_2", PATTERN_R2 + ".s2.out.fastq"),
         primers = os.path.join(CONPATH, "nebnext_adapters.fa")
     output:
-        r1 = os.path.join(QC, "step_3", PATTERN_R1 + ".s3.out.fastq"),
-        r2 = os.path.join(QC, "step_3", PATTERN_R2 + ".s3.out.fastq"),
+        r1 = temp(os.path.join(QC, "step_3", PATTERN_R1 + ".s3.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_3", PATTERN_R2 + ".s3.out.fastq")),
         stats = os.path.join(QC, "step_3", "{sample}.s3.stats.txt")
     benchmark:
         "benchmarks/remove_primer_free_adapter_{sample}.txt"
@@ -107,8 +107,8 @@ rule remove_adapter_free_primer:
         r2 = os.path.join(QC, "step_3", PATTERN_R2 + ".s3.out.fastq"),
         primers = os.path.join(CONPATH, "rc_primerB_ad6.fa")
     output:
-        r1 = os.path.join(QC, "step_4", PATTERN_R1 + ".s4.out.fastq"),
-        r2 = os.path.join(QC, "step_4", PATTERN_R2 + ".s4.out.fastq"),
+        r1 = temp(os.path.join(QC, "step_4", PATTERN_R1 + ".s4.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_4", PATTERN_R2 + ".s4.out.fastq")),
         stats = os.path.join(QC, "step_4", "{sample}.s4.stats.txt")
     benchmark:
         "benchmarks/remove_adapter_free_primer_{sample}.txt"
@@ -136,8 +136,8 @@ rule remove_vector_contamination:
         r2 = os.path.join(QC, "step_4", PATTERN_R2 + ".s4.out.fastq"),
         primers = os.path.join(CONPATH, config['DatabaseFiles']['contaminants'])
     output:
-        r1 = os.path.join(QC, "step_5", PATTERN_R1 + ".s5.out.fastq"),
-        r2 = os.path.join(QC, "step_5", PATTERN_R2 + ".s5.out.fastq"),
+        r1 = temp(os.path.join(QC, "step_5", PATTERN_R1 + ".s5.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_5", PATTERN_R2 + ".s5.out.fastq")),
         stats = os.path.join(QC, "step_5", "{sample}.s5.stats.txt")
     benchmark:
         "benchmarks/remove_vector_contamination_{sample}.txt"

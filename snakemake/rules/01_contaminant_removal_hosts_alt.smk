@@ -16,7 +16,7 @@ rule bowtie2_host_removal:
         r1 = os.path.join(QC, "step_5", PATTERN_R1 + ".s5.out.fastq"),
         r2 = os.path.join(QC, "step_5", PATTERN_R2 + ".s5.out.fastq"),
     output:
-        os.path.join(QC, "step_6", '{sample}.host.bam')
+        temp(os.path.join(QC, "step_6", '{sample}.host.bam'))
     benchmark:
         "benchmarks/bowtie2_host_removal_{sample}.txt"
     resources:
@@ -42,9 +42,9 @@ rule reads_host_mapped:
     input:
         os.path.join(QC, "step_6", '{sample}.host.bam')
     output:
-        r1 = os.path.join(QC, "step_6", PATTERN_R1 + '_host.mapped.fastq'),
-        r2 = os.path.join(QC, "step_6", PATTERN_R2 + '_host.mapped.fastq'),
-        s = os.path.join(QC, "step_6", '{sample}_singletons_host.mapped.fastq')
+        r1 = temp(os.path.join(QC, "step_6", PATTERN_R1 + '_host.mapped.fastq')),
+        r2 = temp(os.path.join(QC, "step_6", PATTERN_R2 + '_host.mapped.fastq')),
+        s = temp(os.path.join(QC, "step_6", '{sample}_singletons_host.mapped.fastq'))
     benchmark:
         "benchmarks/reads_host_mapped_{sample}.txt"
     resources:
@@ -63,9 +63,9 @@ rule reads_host_unmapped:
     input:
         os.path.join(QC, "step_6", '{sample}.host.bam')
     output:
-        r1 = os.path.join(QC, "step_6", PATTERN_R1 + '_host.unmapped.fastq'),
-        r2 = os.path.join(QC, "step_6", PATTERN_R2 + '_host.unmapped.fastq'),
-        s = os.path.join(QC, "step_6", '{sample}_singletons_host.unmapped.fastq')
+        r1 = temp(os.path.join(QC, "step_6", PATTERN_R1 + '_host.unmapped.fastq')),
+        r2 = temp(os.path.join(QC, "step_6", PATTERN_R2 + '_host.unmapped.fastq')),
+        s = temp(os.path.join(QC, "step_6", '{sample}_singletons_host.unmapped.fastq'))
     benchmark:
         "benchmarks/reads_host_unmapped_{sample}.txt"
     resources:
@@ -86,7 +86,7 @@ rule line_sine_bam:
         r2 = os.path.join(QC, "step_6", PATTERN_R2 + '_host.unmapped.fastq'),
         s = os.path.join(QC, "step_6", '{sample}_singletons_host.unmapped.fastq')
     output:
-        os.path.join(QC, "step_6", '{sample}.linesine.bam')
+        temp(os.path.join(QC, "step_6", '{sample}.linesine.bam'))
     benchmark:
         "benchmarks/line_sine_bam_{sample}.txt"
     resources:
@@ -107,9 +107,9 @@ rule reads_linesine_mapped:
     input:
         os.path.join(QC, "step_6", '{sample}.linesine.bam')
     output:
-        r1 = os.path.join(QC, "step_6", PATTERN_R1 + '_linesine.mapped.fastq'),
-        r2 = os.path.join(QC, "step_6", PATTERN_R2 + '_linesine.mapped.fastq'),
-        s = os.path.join(QC, "step_6", '{sample}_singletons_linesine.mapped.fastq')
+        r1 = temp(os.path.join(QC, "step_6", PATTERN_R1 + '_linesine.mapped.fastq')),
+        r2 = temp(os.path.join(QC, "step_6", PATTERN_R2 + '_linesine.mapped.fastq')),
+        s = temp(os.path.join(QC, "step_6", '{sample}_singletons_linesine.mapped.fastq'))
     benchmark:
         "benchmarks/reads_linesine_mapped_{sample}.txt"
     resources:
@@ -128,9 +128,9 @@ rule reads_linesine_unmapped:
     input:
         os.path.join(QC, "step_6", '{sample}.linesine.bam')
     output:
-        r1 = os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq"),
-        r2 = os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq"),
-        s = os.path.join(QC, "step_6", '{sample}_singletons.s6.out.fastq')
+        r1 = temp(os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq")),
+        s = temp(os.path.join(QC, "step_6", '{sample}_singletons.s6.out.fastq'))
     benchmark:
         "benchmarks/reads_linesine_unmapped_{sample}.txt"
     resources:
@@ -150,9 +150,9 @@ rule remove_bacteria:
     Step 8: Remove bacterial contaminants reserving viral and ambiguous sequences
     """
     input:
-        r1 = os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq"),
-        r2 = os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq"),
-        s = os.path.join(QC, "step_6", '{sample}_singletons.s6.out.fastq')
+        r1 = temp(os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq")),
+        s = temp(os.path.join(QC, "step_6", '{sample}_singletons.s6.out.fastq'))
     output:
         os.path.join(QC, "step_7", '{sample}.bacteria.bam')
     params:
@@ -175,10 +175,10 @@ rule reads_bacteria_mapped:
     input:
         os.path.join(QC, "step_7", '{sample}.bacteria.bam')
     output:
-        r1 = os.path.join(QC, "step_7", PATTERN_R1 + '.bacteria_mapped.fastq'),
-        r2 = os.path.join(QC, "step_7", PATTERN_R2 + '.bacteria_mapped.fastq'),
-        s1 = os.path.join(QC, "step_7", PATTERN_R1 + '.bacteria_mapped_singletons.fastq'),
-        s2 = os.path.join(QC, "step_7", PATTERN_R2 + '.bacteria_mapped_singletons.fastq')
+        r1 = temp(os.path.join(QC, "step_7", PATTERN_R1 + '.bacteria_mapped.fastq')),
+        r2 = temp(os.path.join(QC, "step_7", PATTERN_R2 + '.bacteria_mapped.fastq')),
+        s1 = temp(os.path.join(QC, "step_7", PATTERN_R1 + '.bacteria_mapped_singletons.fastq')),
+        s2 = temp(os.path.join(QC, "step_7", PATTERN_R2 + '.bacteria_mapped_singletons.fastq'))
     benchmark:
         "benchmarks/reads_bacteria_mapped_{sample}.txt"
     resources:
@@ -198,10 +198,10 @@ rule reads_bacteria_unmapped:
     input:
         os.path.join(QC, "step_7", '{sample}.bacteria.bam')
     output:
-        r1 = os.path.join(QC, "step_8", PATTERN_R1 + ".bacteria_unmapped.fastq"),
-        r2 = os.path.join(QC, "step_8", PATTERN_R2 + ".bacteria_unmapped.fastq"),
-        s1 = os.path.join(QC, "step_8", PATTERN_R1 + ".bacteria_unmapped_singletons.fastq"),
-        s2 = os.path.join(QC, "step_8", PATTERN_R2 + ".bacteria_unmapped_singletons.fastq")
+        r1 = temp(os.path.join(QC, "step_8", PATTERN_R1 + ".bacteria_unmapped.fastq")),
+        r2 = temp(os.path.join(QC, "step_8", PATTERN_R2 + ".bacteria_unmapped.fastq")),
+        s1 = temp(os.path.join(QC, "step_8", PATTERN_R1 + ".bacteria_unmapped_singletons.fastq")),
+        s2 = temp(os.path.join(QC, "step_8", PATTERN_R2 + ".bacteria_unmapped_singletons.fastq"))
     benchmark:
         "benchmarks/reads_bacteria_unmapped_{sample}.txt"
     resources:
@@ -225,6 +225,6 @@ rule concatenate_singletons:
         r1 = os.path.join(QC, "step_8", PATTERN_R1 + ".bacteria_unmapped.fastq"),
         s1 = os.path.join(QC, "step_8", PATTERN_R1 + ".bacteria_unmapped_singletons.fastq")
     output:
-        os.path.join(QC, "step_9", PATTERN_R1 + ".viral_amb.fastq")
+        temp(os.path.join(QC, "step_9", PATTERN_R1 + ".viral_amb.fastq"))
     shell:
         "cat {input} > {output}"

@@ -13,18 +13,16 @@ rule prinseq_low_quality:
 
     Here we use prinseq++ to trim and dereplicate the sequences by quaity
     """
-
-
     input:
         r1 = os.path.join(READDIR, PATTERN_R1 + file_extension),
         r2 = os.path.join(READDIR, PATTERN_R2 + file_extension)
     output:
-        r1 = os.path.join(QC, "step_0", PATTERN_R1 + ".good_out.s0.fastq"),
-        r2 = os.path.join(QC, "step_0", PATTERN_R2 + ".good_out.s0.fastq"),
-        s1 = os.path.join(QC, "step_0", PATTERN_R1 + ".single_out.s0.fastq"),
-        s2 = os.path.join(QC, "step_0", PATTERN_R2 + ".single_out.s0.fastq"),
-        b1 = temporary(os.path.join(QC, "step_0", PATTERN_R1 + ".bad_out_R1.fastq")),
-        b2 = temporary(os.path.join(QC, "step_0", PATTERN_R2 + ".bad_out_R2.fastq"))
+        r1 = temp(os.path.join(QC, "step_0", PATTERN_R1 + ".good_out.s0.fastq")),
+        r2 = temp(os.path.join(QC, "step_0", PATTERN_R2 + ".good_out.s0.fastq")),
+        s1 = temp(os.path.join(QC, "step_0", PATTERN_R1 + ".single_out.s0.fastq")),
+        s2 = temp(os.path.join(QC, "step_0", PATTERN_R2 + ".single_out.s0.fastq")),
+        b1 = temp(os.path.join(QC, "step_0", PATTERN_R1 + ".bad_out_R1.fastq")),
+        b2 = temp(os.path.join(QC, "step_0", PATTERN_R2 + ".bad_out_R2.fastq"))
     benchmark:
         "benchmarks/trim_low_quality_{sample}.txt"
     resources:

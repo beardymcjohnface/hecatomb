@@ -15,8 +15,8 @@ rule host_removal:
         r2 = os.path.join(QC, "step_5", PATTERN_R2 + ".s5.out.fastq"),
         refpath = os.path.join(HOSTPATH, "ref")
     output:
-        unmapped = os.path.join(QC, "step_6", "{sample}.host.unmapped.s6.out.fastq"),
-        mapped = os.path.join(QC, "step_6", "{sample}.host.mapped.s6.out.fastq")
+        unmapped = temp(os.path.join(QC, "step_6", "{sample}.host.unmapped.s6.out.fastq")),
+        mapped = temp(os.path.join(QC, "step_6", "{sample}.host.mapped.s6.out.fastq"))
     params:
         hostpath = HOSTPATH
     benchmark:
@@ -43,8 +43,8 @@ rule line_sine_removal:
         unmapped = os.path.join(QC, "step_6", "{sample}.host.unmapped.s6.out.fastq"),
         linesine = os.path.join(CONPATH, "line_sine.fasta")
     output:
-        unmapped = os.path.join(QC, "step_6", "{sample}.linesine.unmapped.s6.out.fastq"),
-        mapped   = os.path.join(QC, "step_6", "{sample}.linesine.mapped.s6.out.fastq"),
+        unmapped = temp(os.path.join(QC, "step_6", "{sample}.linesine.unmapped.s6.out.fastq")),
+        mapped   = temp(os.path.join(QC, "step_6", "{sample}.linesine.mapped.s6.out.fastq")),
         stats    = os.path.join(QC, "step_6", "{sample}.linesine.stats")
     benchmark:
         "benchmarks/line_sine_removal_{sample}.txt"
@@ -68,8 +68,8 @@ rule repair_paired_ends:
     input:
         unmapped = os.path.join(QC, "step_6", "{sample}.linesine.unmapped.s6.out.fastq")
     output:
-        r1 = os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq"),
-        r2 = os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq")
+        r1 = temp(os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq"))
     benchmark:
         "benchmarks/repair_paired_ends_{sample}.txt"
     resources:
@@ -93,9 +93,9 @@ rule trim_low_quality:
         r1 = os.path.join(QC, "step_6", PATTERN_R1 + ".s6.out.fastq"),
         r2 = os.path.join(QC, "step_6", PATTERN_R2 + ".s6.out.fastq")
     output:
-        r1 = os.path.join(QC, "step_7", PATTERN_R1 + ".s7.out.fastq"),
-        r2 = os.path.join(QC, "step_7", PATTERN_R2 + ".s7.out.fastq"),
-        singletons = os.path.join(QC, "step_7", "{sample}.singletons.s7.out.fastq"),
+        r1 = temp(os.path.join(QC, "step_7", PATTERN_R1 + ".s7.out.fastq")),
+        r2 = temp(os.path.join(QC, "step_7", PATTERN_R2 + ".s7.out.fastq")),
+        singletons = temp(os.path.join(QC, "step_7", "{sample}.singletons.s7.out.fastq")),
         stats = os.path.join(QC, "step_7", "{sample}.s7.stats.txt")
     benchmark:
         "benchmarks/trim_low_quality_{sample}.txt"
@@ -126,7 +126,7 @@ rule get_r1_singletons:
     input:
         singletons = os.path.join(QC, "step_7", "{sample}.singletons.s7.out.fastq")
     output:
-        r1singletons = os.path.join(QC, "step_8", "{sample}.singletons.R1.out.fastq"),
+        r1singletons = temp(os.path.join(QC, "step_8", "{sample}.singletons.R1.out.fastq")),
     shell:
         """
         egrep --no-group-separator -A 3 '/1|1:N:' {input.singletons} > {output.r1singletons};
@@ -139,7 +139,7 @@ rule get_r2_singletons:
     input:
         singletons = os.path.join(QC, "step_7", "{sample}.singletons.s7.out.fastq")
     output:
-        r2singletons = os.path.join(QC, "step_8", "{sample}.singletons.R2.out.fastq")
+        r2singletons = temp(os.path.join(QC, "step_8", "{sample}.singletons.R2.out.fastq"))
     params:
         odir = os.path.join(QC, "step_8")
     shell:
@@ -155,7 +155,7 @@ rule concat_r1:
         r1 = os.path.join(QC, "step_7", PATTERN_R1 + ".s7.out.fastq"),
         r1singletons = os.path.join(QC, "step_8", "{sample}.singletons.R1.out.fastq")
     output:
-        r1combo = os.path.join(QC, "step_8", PATTERN_R1 + ".s8.out.fastq"),
+        r1combo = temp(os.path.join(QC, "step_8", PATTERN_R1 + ".s8.out.fastq")),
     shell:
         """
         cat {input.r1} {input.r1singletons} > {output.r1combo};
@@ -169,7 +169,7 @@ rule concat_r2:
         r2 = os.path.join(QC, "step_7", PATTERN_R2 + ".s7.out.fastq"),
         r2singletons = os.path.join(QC, "step_8", "{sample}.singletons.R2.out.fastq")
     output:
-        r2combo = os.path.join(QC, "step_8", PATTERN_R2 + ".s8.out.fastq")
+        r2combo = temp(os.path.join(QC, "step_8", PATTERN_R2 + ".s8.out.fastq"))
     shell:
         """
         cat {input.r2} {input.r2singletons} > {output.r2combo};
@@ -183,7 +183,7 @@ rule remove_bacteria:
         r1 = os.path.join(QC, "step_8", PATTERN_R1 + ".s8.out.fastq"),
         bacpath = os.path.join(BACPATH, "ref")
     output:
-        mapped = os.path.join(QC, "step_9", PATTERN_R1 + ".bacterial.fastq"),
+        mapped = temp(os.path.join(QC, "step_9", PATTERN_R1 + ".bacterial.fastq")),
         unmapped = os.path.join(QC, "step_9", PATTERN_R1 + ".viral_amb.fastq"),
         scafstats = os.path.join(QC, "step_9", PATTERN_R1 + ".scafstats.txt")
     params:
@@ -204,6 +204,5 @@ rule remove_bacteria:
             semiperfectmode=t quickmatch fast ordered=t ow=t \
             -Xmx{resources.mem_mb}m
        """
-
 
 
