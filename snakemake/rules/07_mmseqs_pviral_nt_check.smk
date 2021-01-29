@@ -129,7 +129,8 @@ rule nt_search_checked:
     shell:
         """
         if [[ -s {params.st} ]]; then \
-            mmseqs search {params.st} {NTDB} {params.rdb} $(mkdir -p {output.tmp}) \
+            mkdir -p {output.tmp};
+            mmseqs search {params.st} {NTDB} {params.rdb} {output.tmp} \
             -a -e 0.000001 --search-type 3 --cov-mode 2 -c 0.95 --threads {resources.cpus};
         else \
             touch {output};
