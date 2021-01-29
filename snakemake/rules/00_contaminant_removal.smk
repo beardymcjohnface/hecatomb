@@ -134,7 +134,7 @@ rule remove_vector_contamination:
     input:
         r1 = os.path.join(QC, "step_4", PATTERN_R1 + ".s4.out.fastq"),
         r2 = os.path.join(QC, "step_4", PATTERN_R2 + ".s4.out.fastq"),
-        primers = os.path.join(CONPATH, config['DatabaseFiles']['contaminants'])
+        primers = os.path.join(CONPATH, config['contaminants'])
     output:
         r1 = temp(os.path.join(QC, "step_5", PATTERN_R1 + ".s5.out.fastq")),
         r2 = temp(os.path.join(QC, "step_5", PATTERN_R2 + ".s5.out.fastq")),

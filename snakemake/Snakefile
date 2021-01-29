@@ -41,6 +41,9 @@ CONPATH = os.path.join(DBDIR, "contaminants")
 BACBT2 = os.path.join(DBDIR, "bac_giant_unique_species", "bac_uniquespecies_giant.masked_Ns_removed")
 HOSTBT2 = os.path.join(DBDIR, "human_masked", "human_virus_masked")
 
+# database files
+
+
 # paths for output data
 TMPDIR = 'tmp'
 LOGDIR = 'logs'

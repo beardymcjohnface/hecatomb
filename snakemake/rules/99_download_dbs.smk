@@ -12,9 +12,9 @@ rule download_hecatomb_db:
     Download and unpack the hecatomb databases
     """
     output:
-        os.path.join(BACPATH, config['DatabaseFiles']['bacteria']),
-        os.path.join(CONPATH, config['DatabaseFiles']['contaminants']),
-        os.path.join(HOSTPATH, config['DatabaseFiles']['host']),
+        os.path.join(BACPATH, config['bacteria']),
+        os.path.join(CONPATH, config['contaminants']),
+        os.path.join(HOSTPATH, config['host']),
         os.path.join(CONPATH, "nebnext_adapters.fa"),
         os.path.join(CONPATH, "primerB.fa"),
         os.path.join(CONPATH, "rc_primerB_ad6.fa")
@@ -101,7 +101,7 @@ rule make_bac_bt_idx:
     Generate bacteria bowtie2 index
     """
     input:
-        os.path.join(BACPATH, config['DatabaseFiles']['bacteria'])
+        os.path.join(BACPATH, config['bacteria'])
     output:
         expand(os.path.join(BACPATH, "bac_uniquespecies_giant.masked_Ns_removed.{n}.bt2l"), n=[1,2,3,4])
     benchmark:
@@ -111,7 +111,7 @@ rule make_bac_bt_idx:
         cpus=16
     params:
         wd = BACPATH,
-        fa = config['DatabaseFiles']['bacteria'],
+        fa = config['bacteria'],
         bt = "bac_uniquespecies_giant.masked_Ns_removed"
     conda:
         "../envs/bowtie2.yaml"
@@ -145,7 +145,7 @@ rule make_host_bt_idx:
     Generate host bowtie2 index
     """
     input:
-        os.path.join(HOSTPATH, config['DatabaseFiles']['host'])
+        os.path.join(HOSTPATH, config['host'])
     output:
         expand(os.path.join(HOSTPATH, "human_virus_masked.{n}.bt2l"), n=[1,2,3,4])
     benchmark:
@@ -156,7 +156,7 @@ rule make_host_bt_idx:
     params:
         wd = HOSTPATH,
         btidx = "human_virus_masked",
-        fa = config['DatabaseFiles']['host']
+        fa = config['host']
     conda:
         "../envs/bowtie2.yaml"
     shell:

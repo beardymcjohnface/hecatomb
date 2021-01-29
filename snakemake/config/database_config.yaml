@@ -1,12 +1,7 @@
 #---
-Paths:
-  Logs: logs
-
-DatabaseFiles:
-  # These are our predefined databases that we screen against, but you may want to replace host with e.g. mouse
-  bacteria: bac_uniquespecies_giant.masked_Ns_removed.fasta
-  contaminants: vector_contaminants.fa.gz
-  host: human_virus_masked.fasta
+bacteria: bac_uniquespecies_giant.masked_Ns_removed.fasta
+contaminants: vector_contaminants.fa.gz
+host: human_virus_masked.fasta
 
 # URLs and checksums for databases
 url:
