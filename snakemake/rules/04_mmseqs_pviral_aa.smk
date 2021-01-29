@@ -78,7 +78,7 @@ rule seqtable_taxsearch:
         """ 
         mmseqs taxonomy {input.sq} {input.db} {params.tr} $(mkdir -p {output.tmp}) \
             -a --start-sens 4 --sens-steps 2 -s 6 --threads {resources.cpus} \
-            --search-type 2 --tax-output-mode 1 --split-memory-limit {resources.mem_mb}M
+            --search-type 2 --tax-output-mode 1
         """
 
 rule seqtable_convert_alignments:
