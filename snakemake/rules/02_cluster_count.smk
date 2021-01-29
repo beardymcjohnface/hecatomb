@@ -57,7 +57,7 @@ rule deduplicate:
 
 rule extract_seq_counts:
     """
-    Step 3: Extract sequences and counts for seqtable (count table)
+    Step 3: Make each sequences one line long
     """
     input:
         os.path.join(QC, "step_11", PATTERN_R1 + ".best.fasta")
@@ -80,7 +80,7 @@ rule extract_seq_counts:
 
 rule extract_counts:
     """
-    Parse and combine stats and contig files
+    put sequences into a text file
     """
     input:
         os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta")
@@ -93,7 +93,7 @@ rule extract_counts:
 
 rule extract_counts_ids:
     """
-    Extract sequence IDs
+    put the sequence IDs into a list text file. This file is not used for anything.
     """
     input:
         os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta")
@@ -106,7 +106,7 @@ rule extract_counts_ids:
 
 rule exract_count_stats:
     """
-    Extract counts
+    put the sequence counts into a list text file
     """
     input:
         os.path.join(QC, "step_11", "{sample}_stats.txt")
@@ -121,7 +121,7 @@ rule exract_count_stats:
 
 rule create_seq_table:
     """
-    Create sequence table
+    combine the sequences list and the counts list.
     """
     input:
         seq = os.path.join(QC, "counts", "{sample}_seqs.txt"),

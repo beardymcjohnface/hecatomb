@@ -29,23 +29,21 @@ HELP:
 Download and install the Databases (you only have to do this once): 
 hecatomb install
 
-To run hecatomb, first create a template config file:
-hecatomb config
-
-Then, edit the config file and run hecatomb:
-hecatomb run
+Run hecatomb:
+hecatomb run --reads fastq/
 
 To run hecatomb on a HPC cluster (slurm or sge):
 hecatomb [install/run] --cluster slurm
 
 The Hecatomb pipeline is powered by Snakemake; pass additional arguments to Snakemake like so:
 hecatomb [install/run] --snake=--dry-run
-hecatomb [install/run] --snake=--unlock --snake="--report out.html" --snake=--touch
+hecatomb [install/run] --snake=--unlock --snake=--touch
 hecatomb [install/run] --snake="--force --cleanup-metadata seqtable.fasta"
 '''
 )
-parser.add_argument('command', choices=['install', 'config', 'run'])
-parser.add_argument('--config', help='Config file name', default='config.yaml')
+parser.add_argument('command', choices=['install', 'run'])
+parser.add_argument('--reads', help='Directory containing seq data')
+parser.add_argument('--host', help='Host genome for contaminant removal', default='human_virus_contaminants.fa.gz')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
 parser.add_argument('--snake',
                     help='Pass one or more commands to Snakemake e.g. --snake=--unlock',
@@ -116,37 +114,37 @@ def install():
         sys.stderr.write("ERROR: Database installation failed\n")
 
 
-def config():
-    """
-    The config function. This will simply copy the template config file to the working directory with
-    paths to database files etc. properly resolved.
-    :return:
-    """
-    sampleConfig = os.path.normpath(os.path.join(SNEKDIR, 'config/sample_config.yaml'))
-    if pathlib.Path(args.config).is_file():
-        sys.stderr.write(f'Found config file {args.config}\n')
-    else:
-        sys.stderr.write("Generating a configuration file\n")
-        time.sleep(1)
-        copyfile(sampleConfig, args.config)
-        sys.stderr.write(f'created template config file {args.config}\n')
-    sys.stderr.write("\n--------------------\n")
-    f = open(args.config, 'r')
-    for line in f:
-        sys.stderr.write(line)
-    f.close()
-    sys.stderr.write(f"\n--------------------\n\nEdit config file in nano before continuing? [y/N]: ")
-    YN = input()
-    if 'y' in YN or 'Y' in YN:
-        call([EDITOR, args.config])
-    sys.stderr.write("""
-
-Configuration file created!
-
-Replace 'test_data/fastq' with the directory containing your sequencing data.
-Sequencing read files should be named like so: {sample}_{R1/R2}.fastq.gz
-
-""")
+# def config():
+#     """
+#     The config function. This will simply copy the template config file to the working directory with
+#     paths to database files etc. properly resolved.
+#     :return:
+#     """
+#     sampleConfig = os.path.normpath(os.path.join(SNEKDIR, 'config/sample_config.yaml'))
+#     if pathlib.Path(args.config).is_file():
+#         sys.stderr.write(f'Found config file {args.config}\n')
+#     else:
+#         sys.stderr.write("Generating a configuration file\n")
+#         time.sleep(1)
+#         copyfile(sampleConfig, args.config)
+#         sys.stderr.write(f'created template config file {args.config}\n')
+#     sys.stderr.write("\n--------------------\n")
+#     f = open(args.config, 'r')
+#     for line in f:
+#         sys.stderr.write(line)
+#     f.close()
+#     sys.stderr.write(f"\n--------------------\n\nEdit config file in nano before continuing? [y/N]: ")
+#     YN = input()
+#     if 'y' in YN or 'Y' in YN:
+#         call([EDITOR, args.config])
+#     sys.stderr.write("""
+#
+# Configuration file created!
+#
+# Replace 'test_data/fastq' with the directory containing your sequencing data.
+# Sequencing read files should be named like so: {sample}_{R1/R2}.fastq.gz
+#
+# """)
 
 
 def run():
@@ -154,28 +152,27 @@ def run():
     The run function. This will run the hecatome snakemake pipeline itself.
     :return:
     """
-    if pathlib.Path(args.config).is_file():
-        sys.stderr.write("Running Hecatomb\n")
-        snekFile = os.path.normpath(os.path.join(SNEKDIR, 'Snakefile'))
-        if args.cluster:
-            runJobs = f'--profile {args.cluster}'
-        else:
-            runJobs = '-j 16'
-        runCommand = f'{runSnake} -s {snekFile} {runJobs} --configfile {args.config} --config Databases={DBDIR}'
-        if subprocess.call(runCommand.split()) == 0:
-            sys.stderr.write("Hecatomb finished successfully\n")
-        else:
-            sys.stderr.write("ERROR: Hecatomb run failed\n")
+    if not args.reads:
+        sys.stderr.write('ERROR: please specify the directory with sequencing reads with --reads')
+        exit(1)
+    sys.stderr.write(f"Running Hecatomb\n")
+    snekFile = os.path.normpath(os.path.join(SNEKDIR, 'Snakefile'))
+    if args.cluster:
+        runJobs = f'--profile {args.cluster}'
     else:
-        sys.stderr.write(f'ERROR: missing configuration file {args.config}. Please run "hecatomb config" to ' \
-                         f'create a configuration file.\n')
+        runJobs = '-j 16'
+    runCommand = f'{runSnake} -s {snekFile} {runJobs} --config Databases={DBDIR} Reads={args.reads}'
+    if subprocess.call(runCommand.split()) == 0:
+        sys.stderr.write("Hecatomb finished successfully\n")
+    else:
+        sys.stderr.write("ERROR: Hecatomb run failed\n")
 
 
 # Run the program
 if args.cluster:
     initialiseCluster(args.cluster)
 
-commands = {'install':install, 'config':config, 'run':run}
+commands = {'install':install, 'run':run}
 commands[args.command]()
 
 time.sleep(1)

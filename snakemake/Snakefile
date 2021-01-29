@@ -24,36 +24,36 @@ Summary:
     # Step 8: Remove bacterial contaminants reserving viral and aambiguous sequences
 """
 
-if not config:
-    sys.stderr.write("FATAL: Please define a config file using the --configfile command line option.\n")
-    sys.stderr.write("examples are provided in the Git repo\n")
-    sys.exit()
+# if not config:
+#     sys.stderr.write("FATAL: Please define a config file using the --configfile command line option.\n")
+#     sys.stderr.write("examples are provided in the Git repo\n")
+#     sys.exit()
 
 
-#DBDIR = config['Paths']['Databases']
+# REQUIRED CONFIG
 DBDIR = config['Databases']
+READDIR = config['Reads']
 
 # paths for our databases
 BACPATH = os.path.join(DBDIR, "bac_giant_unique_species")
 HOSTPATH = os.path.join(DBDIR, "human_masked")
 CONPATH = os.path.join(DBDIR, "contaminants")
-
 BACBT2 = os.path.join(DBDIR, "bac_giant_unique_species", "bac_uniquespecies_giant.masked_Ns_removed")
 HOSTBT2 = os.path.join(DBDIR, "human_masked", "human_virus_masked")
 
-# paths for our data. This is where we will read and put things
-READDIR = config['Paths']['Reads']
-CLUMPED = config['Output']["Clumped"]
-QC = config['Output']['QC']
-RESULTS = config['Output']['Results']
-TMPDIR = config['Temp']
-if not os.path.exists(TMPDIR):
-    os.makedirs(TMPDIR, exist_ok=True)
-LOGDIR = config['Logs']
-if not os.path.exists(LOGDIR):
-    os.makedirs(LOGDIR, exist_ok=True)
+# paths for output data
+TMPDIR = 'tmp'
+LOGDIR = 'logs'
+CLUMPED = 'clumped'
+QC = 'QC'
+RESULTS = 'results'
+
+for dir in [TMPDIR, LOGDIR]:
+    if not os.path.exists(dir):
+        os.makedirs(dir, exist_ok=True)
 
 
+# PREFLIGHT CHECKS
 fatal_errors = False
 fatal_messages = []
 
@@ -67,9 +67,7 @@ if not os.path.exists(PROTPATH):
     fatal_messages.append("protein databases")
     fatal_errors = True
 
-# The virus database, clustered at 99% with cd-hit and then compiled
-# with mmseqs
-
+# The virus database, clustered at 99% with cd-hit and then compiled with mmseqs
 VIRDB = os.path.join(PROTPATH, "uniprot_virus_c99.db")
 if not os.path.exists(VIRDB):
     fatal_messages.append(VIRDB)
@@ -122,7 +120,6 @@ if not os.path.exists(TAXTAX):
     fatal_errors = True
 
 # Bacterial virus masked database for section 07 mmseqs pviral check
-
 BVMDB = os.path.join(NUCLPATH, "bac_virus_masked", "nt.fnaDB")
 if not os.path.exists(BVMDB):
     fatal_messages.append(BVMDB)
@@ -137,19 +134,19 @@ if not os.path.exists(BVMDB):
 
 # check to see if we have the right versions of the databases for
 # either bowtie or bbmap (default)
-if config['Options']['use_bowtie']:
-    for bti in [BACBT2, HOSTBT2]:
-        if not os.path.exists(f"{bti}.1.bt2l") and not os.path.exists(f"{bti}.1.bt2"):
-            fatal_messages.append(f"bowtie2 indexes for {bti}")
-            fatal_errors = True
+# if config['Options']['use_bowtie']:
+for bti in [BACBT2, HOSTBT2]:
+    if not os.path.exists(f"{bti}.1.bt2l") and not os.path.exists(f"{bti}.1.bt2"):
+        fatal_messages.append(f"bowtie2 indexes for {bti}")
+        fatal_errors = True
 
-    if not os.path.exists(os.path.join(CONPATH, "line_sine.1.bt2")):
-        fatal_messages.append("bowtie2 indexes for the line/sine database")
-        fatal_errors = True
-else:
-    if not os.path.exists(os.path.join(HOSTPATH, "ref")):
-        fatal_messages.append("host databases")
-        fatal_errors = True
+if not os.path.exists(os.path.join(CONPATH, "line_sine.1.bt2")):
+    fatal_messages.append("bowtie2 indexes for the line/sine database")
+    fatal_errors = True
+# else:
+#     if not os.path.exists(os.path.join(HOSTPATH, "ref")):
+#         fatal_messages.append("host databases")
+#         fatal_errors = True
 
 ###################################################################
 #                                                                 #
@@ -205,20 +202,20 @@ if len(SAMPLES) == 0:
 
 
 # if we don't run prinseq, this is our input to the first step of 00_contaminant_removal.smk
-remove_leftmost_primerB_r1_input = os.path.join(READDIR, PATTERN_R1 + file_extension),
-remove_leftmost_primerB_r2_input = os.path.join(READDIR, PATTERN_R2 + file_extension),
+# remove_leftmost_primerB_r1_input = os.path.join(READDIR, PATTERN_R1 + file_extension),
+# remove_leftmost_primerB_r2_input = os.path.join(READDIR, PATTERN_R2 + file_extension),
 
-if config['Options']['run_prinseq']:
-    include: "rules/00_prinseq.smk"
-    remove_leftmost_primerB_r1_input = os.path.join(QC, "step_0", PATTERN_R1 + ".good_out.s0.fastq"),
-    remove_leftmost_primerB_r2_input = os.path.join(QC, "step_0", PATTERN_R2 + ".good_out.s0.fastq"),
+# if config['Options']['run_prinseq']:
+include: "rules/00_prinseq.smk"
+remove_leftmost_primerB_r1_input = os.path.join(QC, "step_0", PATTERN_R1 + ".good_out.s0.fastq"),
+remove_leftmost_primerB_r2_input = os.path.join(QC, "step_0", PATTERN_R2 + ".good_out.s0.fastq"),
 
 
 include: "rules/00_contaminant_removal.smk"
-if config['Options']['use_bowtie']:
-    include: "rules/01_contaminant_removal_hosts_alt.smk"
-else:
-    include: "rules/01_contaminant_removal_hosts.smk"
+# if config['Options']['use_bowtie']:
+include: "rules/01_contaminant_removal_hosts_alt.smk"
+# else:
+    # include: "rules/01_contaminant_removal_hosts.smk"
 include: "rules/02_cluster_count.smk"
 include: "rules/03_seqtable.smk"
 include: "rules/04_mmseqs_pviral_aa.smk"
@@ -231,7 +228,7 @@ include: "rules/08_concatenate_results.smk"
 rule all:
     input:
         # output of contaminant removal
-        expand(os.path.join(QC, "step_9", PATTERN_R1 + ".viral_amb.fastq"), sample=SAMPLES),
+#        expand(os.path.join(QC, "step_9", PATTERN_R1 + ".viral_amb.fastq"), sample=SAMPLES),
         # output of 02_cluster_count.smk
         expand(os.path.join(QC, "counts", "{sample}_seqtable.txt"), sample=SAMPLES),
         # these two inputs are the outputs from 03_seqtable.smk
