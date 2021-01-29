@@ -57,6 +57,7 @@ rule create_seqtable_db:
     shell:
         "mmseqs createdb --shuffle 0 --dbtype 0 {input} {output}"
 
+# TODO this takes tooo looong
 rule seqtable_taxsearch:
     input:
         sq = os.path.join(AA_OUT, "seqtable_query.db"),
@@ -76,8 +77,8 @@ rule seqtable_taxsearch:
     shell:
         """ 
         mmseqs taxonomy {input.sq} {input.db} {params.tr} $(mkdir -p {output.tmp}) \
-            -a --start-sens 1 --sens-steps 3 -s 7 --threads {resources.cpus} \
-            --search-type 2 --tax-output-mode 1
+            -a --start-sens 4 --sens-steps 2 -s 6 --threads {resources.cpus} \
+            --search-type 2 --tax-output-mode 1 --split-memory-limit {resources.mem_mb}M
         """
 
 rule seqtable_convert_alignments:

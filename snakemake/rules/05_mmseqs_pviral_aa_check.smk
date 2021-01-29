@@ -68,7 +68,8 @@ rule viral_seqs_tax_search:
         if [[ -s {input} ]]; then \
             mmseqs taxonomy {input.vqdb} {URVDB} {params.tr} \
                 $(mkdir -p {output.tmp}) --threads {resources.cpus} \
-                -a -s 7 --search-type 2 --tax-output-mode 1 --split-memory-limit {resources.mem_mb}M;
+                -a --start-sens 4 --sens-steps 2 -s 6 --search-type 2 \
+                --tax-output-mode 1 --split-memory-limit {resources.mem_mb}M;
         else \
             touch {output};
         fi;
