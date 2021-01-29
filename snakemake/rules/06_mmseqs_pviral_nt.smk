@@ -37,7 +37,8 @@ rule nt_search:
         dbt = os.path.join(NT_OUT, "seqtable_queryDB.dbtype")
     output:
         idx = os.path.join(NT_OUT, "resultDB.index"),
-        dbt = os.path.join(NT_OUT, "resultDB.dbtype")
+        dbt = os.path.join(NT_OUT, "resultDB.dbtype"),
+        tmp = temp(directory(os.path.join(TMPDIR, 'nt_search')))
     params:
         st = os.path.join(NT_OUT, "seqtable_queryDB"),
         rdb = os.path.join(NT_OUT, "resultDB")
@@ -49,8 +50,8 @@ rule nt_search:
         "../envs/mmseqs2.yaml"
     shell:
         """
-        mmseqs search {params.st} {NTDB} {params.rdb} $(mktemp -d -p {TMPDIR}) \
-        -a -e 0.000001 --search-type 3 --cov-mode 2 -c 0.95  --threads {resources.cpus}
+        mmseqs search {params.st} {NTDB} {params.rdb} $(mkdir -p {output.tmp}) \
+            -a -e 0.000001 --search-type 3 --cov-mode 2 -c 0.95  --threads {resources.cpus}
         """
 
 rule nt_top_hit:

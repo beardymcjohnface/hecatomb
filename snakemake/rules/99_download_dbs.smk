@@ -287,7 +287,6 @@ rule extract_accession_to_tax:
         "unpigz {input}"
 
 
-# # TODO check if this is actually used anywhere
 # rule create_nt_tax_table:
 #     input:
 #         nt = os.path.join(NUCLPATH, "nt.fna"),
@@ -372,7 +371,6 @@ rule download_uniprot_clusters:
         """
 
 
-# TODO check if this is used anywhere
 rule mmseqs_uniprot_taxdb:
     input:
         vdb = os.path.join(PROTPATH, "uniprot_virus_c99.db"),
@@ -393,14 +391,14 @@ rule mmseqs_uniprot_taxdb:
     output:
         multiext(os.path.join(PROTPATH, "uniprot_virus_c99"),
                  ".db_mapping", ".db_names.dmp", ".db_nodes.dmp",
-                 ".db_merged.dmp", ".db_delnodes.dmp")
+                 ".db_merged.dmp", ".db_delnodes.dmp"),
+        tmp = temp(directory(os.path.join(TMPDIR, 'mmseqs_uniprot_taxdb')))
     shell:
         """
-        mmseqs createtaxdb --ncbi-tax-dump {params.tax} --tax-mapping-file {input.idm} {input.vdb} $(mktemp -d -p {TMPDIR})
+        mmseqs createtaxdb --ncbi-tax-dump {params.tax} --tax-mapping-file {input.idm} {input.vdb} $(mkdir -p {output.tmp})
         """
 
 
-# TODO check if any of the uniref50 stuff is used anywhere
 rule download_uniref50:
     """
     Download the uniprot uniref50 database
@@ -455,7 +453,8 @@ rule mmseqs_urv_taxonomy:
     params:
         tax = TAXPATH
     output:
-        multiext(os.path.join(URVPATH, "uniref50_virus"), ".db_mapping", ".db_names.dmp", ".db_nodes.dmp", ".db_merged.dmp", ".db_delnodes.dmp")
+        multiext(os.path.join(URVPATH, "uniref50_virus"), ".db_mapping", ".db_names.dmp", ".db_nodes.dmp", ".db_merged.dmp", ".db_delnodes.dmp"),
+        tmp = temp(directory(os.path.join(TMPDIR, 'mmseqs_urv_taxonomy')))
     benchmark:
         "benchmarks/mmseqs_urv_taxonomy.txt"
     resources:
@@ -466,30 +465,29 @@ rule mmseqs_urv_taxonomy:
     shell:
         """
         mmseqs createtaxdb --ncbi-tax-dump {params.tax} --tax-mapping-file {input.idm} {input.vdb} \
-        $(mktemp -d -p {TMPDIR}) --threads {resources.cpus}
+        $(mkdir -p {output.tmp}) --threads {resources.cpus}
         """
 
 
-# TODO check if this is used anywhere
-rule mmseqs_nt_db:
-    input:
-        nt = os.path.join(NUCLPATH, "nt.fna")
-    output:
-        idx = os.path.join(NUCLPATH, "ntDB.index"),
-        dbt = os.path.join(NUCLPATH, "ntDB.dbtype")
-    benchmark:
-        "benchmarks/mmseqs_nt_db.txt"
-    resources:
-        mem_mb=20000,
-        cpus=8
-    conda:
-        "../envs/mmseqs2.yaml"
-    params:
-        db = os.path.join(NUCLPATH, "ntDB")
-    shell:
-        """
-        mmseqs createdb {input} {params.db} --dbtype 2 --shuffle 0
-        """
+# rule mmseqs_nt_db:
+#     input:
+#         nt = os.path.join(NUCLPATH, "nt.fna")
+#     output:
+#         idx = os.path.join(NUCLPATH, "ntDB.index"),
+#         dbt = os.path.join(NUCLPATH, "ntDB.dbtype")
+#     benchmark:
+#         "benchmarks/mmseqs_nt_db.txt"
+#     resources:
+#         mem_mb=20000,
+#         cpus=8
+#     conda:
+#         "../envs/mmseqs2.yaml"
+#     params:
+#         db = os.path.join(NUCLPATH, "ntDB")
+#     shell:
+#         """
+#         mmseqs createdb {input} {params.db} --dbtype 2 --shuffle 0
+#         """
 
 
 rule line_sine_download:
@@ -567,14 +565,3 @@ rule download_taxonomizr:
         rm {params.filename}.md5; \
         zstd -d {params.filename} --rm
         """
-
-
-# rule extract_taxonomizr:
-#     input:
-#         os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql.gz")
-#     output:
-#           os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql")
-#     conda:
-#         "envs/pigz.yaml"
-#     shell:
-#          "unpigz {input}"

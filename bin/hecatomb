@@ -115,39 +115,6 @@ def install():
         sys.stderr.write("ERROR: Database installation failed\n")
 
 
-# def config():
-#     """
-#     The config function. This will simply copy the template config file to the working directory with
-#     paths to database files etc. properly resolved.
-#     :return:
-#     """
-#     sampleConfig = os.path.normpath(os.path.join(SNEKDIR, 'config/sample_config.yaml'))
-#     if pathlib.Path(args.config).is_file():
-#         sys.stderr.write(f'Found config file {args.config}\n')
-#     else:
-#         sys.stderr.write("Generating a configuration file\n")
-#         time.sleep(1)
-#         copyfile(sampleConfig, args.config)
-#         sys.stderr.write(f'created template config file {args.config}\n')
-#     sys.stderr.write("\n--------------------\n")
-#     f = open(args.config, 'r')
-#     for line in f:
-#         sys.stderr.write(line)
-#     f.close()
-#     sys.stderr.write(f"\n--------------------\n\nEdit config file in nano before continuing? [y/N]: ")
-#     YN = input()
-#     if 'y' in YN or 'Y' in YN:
-#         call([EDITOR, args.config])
-#     sys.stderr.write("""
-#
-# Configuration file created!
-#
-# Replace 'test_data/fastq' with the directory containing your sequencing data.
-# Sequencing read files should be named like so: {sample}_{R1/R2}.fastq.gz
-#
-# """)
-
-
 def run():
     """
     The run function. This will run the hecatome snakemake pipeline itself.

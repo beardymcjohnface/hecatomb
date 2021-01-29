@@ -52,8 +52,9 @@ rule viral_seqs_tax_search:
     input:
         vqdb = os.path.join(AA_OUT_CHECKED, "viral_seqs_queryDB"),
     output:
-        os.path.join(AA_OUT_CHECKED, "taxonomyResult.dbtype"),
-        os.path.join(AA_OUT_CHECKED, "taxonomyResult.index")
+        db = os.path.join(AA_OUT_CHECKED, "taxonomyResult.dbtype"),
+        idx = os.path.join(AA_OUT_CHECKED, "taxonomyResult.index"),
+        tmp = temp(directory(os.path.join(TMPDIR, 'viral_seqs_tax_search')))
     benchmark: "benchmarks/viral_seqs_tax_search.txt"
     params:
         tr = os.path.join(AA_OUT_CHECKED, "taxonomyResult")
@@ -66,7 +67,7 @@ rule viral_seqs_tax_search:
         """
         if [[ -s {input} ]]; then \
             mmseqs taxonomy {input.vqdb} {URVDB} {params.tr} \
-                $(mktemp -d -p {TMPDIR}) --threads {resources.cpus} \
+                $(mkdir -p {output.tmp}) --threads {resources.cpus} \
                 -a -s 7 --search-type 2 --tax-output-mode 1 --split-memory-limit {resources.mem_mb}M;
         else \
             touch {output};
@@ -195,7 +196,6 @@ rule create_taxtable_vsqd:
         """
 
 rule create_kraken_vsqd:
-    # TODO should params be input?
     input:
         lcadb = os.path.join(AA_OUT_CHECKED, "lca.db.dbtype")
     params:

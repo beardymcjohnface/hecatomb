@@ -62,7 +62,8 @@ rule seqtable_taxsearch:
         sq = os.path.join(AA_OUT, "seqtable_query.db"),
         db = os.path.join(PROTPATH, "uniprot_virus_c99.db")
     output:
-        tr = os.path.join(AA_OUT, "taxonomyResult.dbtype")
+        tr = os.path.join(AA_OUT, "taxonomyResult.dbtype"),
+        tmp = temp(directory(os.path.join(TMPDIR, 'seqtable_taxsearch')))
     params:
         tr = os.path.join(AA_OUT, "taxonomyResult")
     benchmark:
@@ -73,10 +74,10 @@ rule seqtable_taxsearch:
     conda:
         "../envs/mmseqs2.yaml"
     shell:
-        """
-        mmseqs taxonomy {input.sq} {input.db} {params.tr} $(mktemp -d -p {TMPDIR}) \
-        -a --start-sens 1 --sens-steps 3 -s 7 --threads {resources.cpus} \
-        --search-type 2 --tax-output-mode 1
+        """ 
+        mmseqs taxonomy {input.sq} {input.db} {params.tr} $(mkdir -p {output.tmp}) \
+            -a --start-sens 1 --sens-steps 3 -s 7 --threads {resources.cpus} \
+            --search-type 2 --tax-output-mode 1
         """
 
 rule seqtable_convert_alignments:
