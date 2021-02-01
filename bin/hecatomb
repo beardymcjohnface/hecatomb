@@ -51,19 +51,22 @@ parser.add_argument('--snake',
 args = parser.parse_args()
 
 
-# Snakemake run command + additional args
-runSnake = 'snakemake '
-if args.snake:
-    runSnake = runSnake + ' '.join(c for c in args.snake)
-
 # directories of hecatombs installation etc
 BINDIR = os.path.dirname(os.path.realpath(__file__))
 SNEKDIR = os.path.normpath(os.path.join(BINDIR, '../snakemake'))
+CONDDIR = os.path.normpath(os.path.join(SNEKDIR, 'conda'))
 DBDIR = os.path.normpath(os.path.join(BINDIR, '../databases'))
 EDITOR = os.environ.get('EDITOR','nano')
 
+
 # database file config
 confFile = os.path.normpath(os.path.join(SNEKDIR, 'config/database_config.yaml'))
+
+
+# Snakemake run command + additional args
+runSnake = f'snakemake --use-conda --conda-frontend mamba --conda-prefix {CONDDIR} --configfile {confFile} '
+if args.snake:
+    runSnake = runSnake + ' '.join(c for c in args.snake)
 
 
 def initialiseCluster(cluster):
@@ -108,7 +111,7 @@ def install():
         runJobs = '-j 16'
     sys.stderr.write("Checking and downloading database files\n")
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_databases.smk'))
-    runCommand = f'{runSnake} -s {snekFile} {runJobs} --configfile {confFile} --config Databases={DBDIR} tmp=tmp'
+    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Databases={DBDIR} tmp=tmp'
     if subprocess.call(runCommand.split())==0:
         sys.stderr.write("Database installation finished successfully\n")
     else:
@@ -129,7 +132,7 @@ def run():
         runJobs = f'--profile {args.cluster}'
     else:
         runJobs = '-j 16'
-    runCommand = f'{runSnake} -s {snekFile} {runJobs} --configfile {confFile} --config Databases={DBDIR} Reads={args.reads}'
+    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Databases={DBDIR} Reads={args.reads}'
     if subprocess.call(runCommand.split()) == 0:
         sys.stderr.write("Hecatomb finished successfully\n")
     else:
