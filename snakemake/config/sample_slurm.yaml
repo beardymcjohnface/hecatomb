@@ -2,7 +2,7 @@
 jobs: 10
 use-conda: True
 conda-frontend: mamba
-default-resources: [cpus=1, mem_mb=2000, time_min=0-1]
+default-resources: [cpus=1, mem_mb=2000, time_min=60]
 keep-going: True
 
 # slurm settings
