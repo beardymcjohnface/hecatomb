@@ -78,7 +78,7 @@ def initialiseCluster(cluster):
     clustConf = os.path.expanduser(f'~/.config/snakemake/{args.cluster}/config.yaml')
     if pathlib.Path(clustConf).is_file():
         sys.stderr.write(f"Found {cluster} profile {clustConf}\n")
-        sys.stderr.write(f'Do you need to update the {cluster} profile before continuing? [y/N]: ')
+        sys.stderr.write(f'Update {cluster} profile before continuing? [y/N]: ')
         YN = input()
         if 'y' in YN or 'Y' in YN:
             call([EDITOR, clustConf])
