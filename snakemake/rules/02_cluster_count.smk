@@ -85,24 +85,24 @@ rule extract_counts:
     input:
         os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta")
     output:
-        os.path.join(QC, "counts", "{sample}_seqs.txt")
+        temp(os.path.join(QC, "counts", "{sample}_seqs.txt"))
     shell:
         """
         grep -v '>' {input} | sed '1i sequence' > {output}
         """
 
-rule extract_counts_ids:
-    """
-    put the sequence IDs into a list text file. This file is not used for anything.
-    """
-    input:
-        os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta")
-    output:
-        os.path.join(QC, "counts", "{sample}_contig_ids.txt")
-    shell:
-        """
-        grep '>' {input} | sed 's|>Cluster_||' | awk -F "," '{{ print$1 }}' | sort -n | sed '1i contig_ids' > {output}
-        """
+# rule extract_counts_ids:
+#     """
+#     put the sequence IDs into a list text file. This file is not used for anything.
+#     """
+#     input:
+#         os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta")
+#     output:
+#         os.path.join(QC, "counts", "{sample}_contig_ids.txt")
+#     shell:
+#         """
+#         grep '>' {input} | sed 's|>Cluster_||' | awk -F "," '{{ print$1 }}' | sort -n | sed '1i contig_ids' > {output}
+#         """
 
 rule exract_count_stats:
     """
@@ -111,7 +111,7 @@ rule exract_count_stats:
     input:
         os.path.join(QC, "step_11", "{sample}_stats.txt")
     output:
-        os.path.join(QC, "counts", "{sample}_counts.txt")
+        temp(os.path.join(QC, "counts", "{sample}_counts.txt"))
     params:
         s = "{sample}"
     shell:
@@ -132,6 +132,4 @@ rule create_seq_table:
         """
         paste {input.seq} {input.cnt} > {output}
         """
-
-
 
