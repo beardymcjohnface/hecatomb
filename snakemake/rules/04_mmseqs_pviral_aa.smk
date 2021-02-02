@@ -20,28 +20,14 @@ Rob Edwards, March 2020
 
 """
 
-# import os
-# import sys
-#
-# if not os.path.exists(TMPDIR):
-#     os.makedirs(TMPDIR, exist_ok=True)
-#
-# if not os.path.exists(AA_OUT):
-#     os.makedirs(AA_OUT, exist_ok=True)
-#
-# rule mmseqs_pviral_aa_first:
-#     input:
-#         os.path.join(AA_OUT, "phage_tax_table.tsv"),
-#         os.path.join(AA_OUT, "viruses_tax_table.tsv"),
-#         os.path.join(AA_OUT, "unclassified_seqs.fasta")
 
-rule convert_seqtable_to_fasta:
-    input:
-        os.path.join(RESULTS, "seqtable.tab2fx")
-    output:
-        os.path.join(RESULTS, "seqtable.fasta")
-    shell:
-        "sed -e 's/^/>/; s/\\t/\\n/' {input} > {output}"
+# rule convert_seqtable_to_fasta:
+#     input:
+#         os.path.join(RESULTS, "seqtable.tab2fx")
+#     output:
+#         os.path.join(RESULTS, "seqtable.fasta")
+#     shell:
+#         "sed -e 's/^/>/; s/\\t/\\n/' {input} > {output}"
 
 rule create_seqtable_db:
     input:
