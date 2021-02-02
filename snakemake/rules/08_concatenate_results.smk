@@ -45,18 +45,58 @@ rule happily_marry_outputs:
         cat {input.aa} {input.nt} | sort -n -k 1 > {output}
         """
 
-# TODO: incorporate the baltimore virus tax db to fill in taxon information for this output
-    # (2020_07_27_Viral_Baltimore_full_classification_table_ICTV2019.txt)
+
 rule add_crown_to_marriage:
     # not really, its a title
     input:
-        os.path.join(RESULTS, "viruses_tax_table_tmp.tsv")
+        tbl = os.path.join(RESULTS, "viruses_tax_table_tmp.tsv"),
+        tax = os.path.join(TAXPATH, '2020_07_27_Viral_Baltimore_full_classification_table_ICTV2019.txt')
     output:
         os.path.join(RESULTS, "viruses_tax_table.tsv")
-    shell:
-        """
-        sed -e '1iid\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies' {input} > {output}
-        """
+    run:
+        # read in taxon classifications
+        taxon = open(input.tax,'r')
+        line = taxon.readline()
+        taxonClass = {}
+        balt = {}
+        for line in taxon:
+            l = line.rstrip().split('\t')
+            # attach baltimore class and group to Genus
+            try:
+                balt[l[4]]
+            except KeyError:
+                balt[l[4]] = [l[7],l[8]]
+            # attach child taxon to parent designations e.g. key=species, value=genus
+            for i in range(5, 0, -1):
+                if l[i] == '' or l[i-1] == '':
+                    continue
+                try:
+                    taxonClass[l[i]]
+                except KeyError:
+                    taxonClass[l[i]] = l[i-1]
+        taxon.close()
+        # parse the taxon results and fill in any blanks
+        table = open(input.tbl, 'r')
+        out = open(output[0],'w')
+        out.write('id\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tBaltimore\tBaltimoreGroup')
+        for line in table:
+            l = line.rstrip().split('\t')
+            for i in range(7,2,-1):
+                if l[i-1] == 'unknown' and l[i] != 'unknown':
+                    try:
+                        taxonClass[l[i]]
+                        l[i-1] = taxonClass[l[i]]
+                    except KeyError:
+                        pass
+            try:
+                l.append(balt[l[6]])
+            except KeyError:
+                l.append(['',''])
+            out.write('\t'.join(l))
+            out.write('\n')
+        table.close()
+        out.close()
+
 
 rule fix_phage_names:
     input:
