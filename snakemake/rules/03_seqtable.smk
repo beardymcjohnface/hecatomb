@@ -32,4 +32,4 @@ rule merge_seq_table:
                 outCt.write(f'{id}\t{sample}\t{l[1]}\n')
             counts.close()
         outFa.close()
-        outCts.close()
+        outCt.close()
