@@ -26,6 +26,6 @@ rule merge_seq_table:
                 id = str(seqId).zfill(8)
                 seqId = seqId + 1
                 l = line.split()
-                counts.write(f'>{id} s={sample} c={l[1]}\n{l[0]}\n')
+                out.write(f'>{id} s={sample} c={l[1]}\n{l[0]}\n')
             counts.close()
         out.close()
