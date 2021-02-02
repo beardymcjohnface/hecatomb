@@ -12,13 +12,15 @@ rule merge_seq_table:
     input:
         expand(os.path.join(QC, "counts", "{sample}_seqtable.txt"), sample=SAMPLES)
     output:
-        os.path.join(RESULTS,"seqtable.fasta")
+        fa = os.path.join(RESULTS, "seqtable.fasta"),
+        cts = os.path.join(RESULTS, 'seqCounts.tsv')
     params:
         resultsdir = directory(RESULTS),
     benchmark:
         "benchmarks/merge_seq_table.txt"
     run:
-        out = open(output[0], 'w')
+        outFa = open(output.fa, 'w')
+        outCt = open(output.cts, 'w')
         seqId = 0
         for sample in SAMPLES:
             counts = open(os.path.join(QC, 'counts', f'{sample}_seqtable.txt'), 'r')
@@ -26,6 +28,8 @@ rule merge_seq_table:
                 id = str(seqId).zfill(8)
                 seqId = seqId + 1
                 l = line.split()
-                out.write(f'>{id} s={sample} c={l[1]}\n{l[0]}\n')
+                outFa.write(f'>{id}\n{l[0]}\n')
+                outCt.write(f'{id}\t{sample}\t{l[1]}\n')
             counts.close()
-        out.close()
+        outFa.close()
+        outCts.close()
