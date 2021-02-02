@@ -218,6 +218,7 @@ include: "rules/05_mmseqs_pviral_aa_check.smk"
 include: "rules/06_mmseqs_pviral_nt.smk"
 include: "rules/07_mmseqs_pviral_nt_check.smk"
 include: "rules/08_concatenate_results.smk"
+#include: "rules/09_long_table_out.smk"
 
 
 rule all:
@@ -227,8 +228,8 @@ rule all:
         # output of 02_cluster_count.smk
         expand(os.path.join(QC, "counts", "{sample}_seqtable.txt"), sample=SAMPLES),
         # these two inputs are the outputs from 03_seqtable.smk
-        os.path.join(RESULTS, "seqtable_all.tsv"),
-        os.path.join(RESULTS, "seqtable.tab2fx"),
+        #os.path.join(RESULTS, "seqtable_all.tsv"),
+        #os.path.join(RESULTS, "seqtable.tab2fx"),
         # output from 04_mmseqs_pviral_aa
         os.path.join(AA_OUT, "phage_tax_table.tsv"),
         os.path.join(AA_OUT, "viruses_tax_table.tsv"),
