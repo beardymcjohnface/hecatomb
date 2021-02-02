@@ -5,8 +5,6 @@ take all the results and make some cool data sets from them!
 """
 
 
-
-
 rule concatenate_results_first:
     input:
         os.path.join(RESULTS, "viruses_tax_table.tsv"),
@@ -47,6 +45,8 @@ rule happily_marry_outputs:
         cat {input.aa} {input.nt} | sort -n -k 1 > {output}
         """
 
+# TODO: incorporate the baltimore virus tax db to fill in taxon information for this output
+    # (2020_07_27_Viral_Baltimore_full_classification_table_ICTV2019.txt)
 rule add_crown_to_marriage:
     # not really, its a title
     input:
@@ -98,6 +98,7 @@ rule add_aa_tax_header:
         sed -e '1iquery\ttarget\tpercent_id\talignment_length\tnum_mismatches\tnumber_gaps\tstart_query\tend_query\tstart_target\tend_target\te_value\tbit_score' \
                 {input} > {output}
         """
+
 
 rule add_nt_tax_header:
     input:

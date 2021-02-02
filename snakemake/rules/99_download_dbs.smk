@@ -209,10 +209,10 @@ rule download_uniprot_ncbi_mapping:
 
 rule download_ncbi_taxonomy:
     """
-    Download taxdump 
+    Download taxdump
     """
     output:
-        os.path.join(TAXPATH, "taxdump.tar.gz")
+        temp(os.path.join(TAXPATH, "taxdump.tar.gz"))
     conda: "../envs/curl.yaml"
     params:
         wd = TAXPATH,
