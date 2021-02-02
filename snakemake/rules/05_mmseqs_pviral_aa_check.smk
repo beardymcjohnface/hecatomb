@@ -60,7 +60,8 @@ rule viral_seqs_tax_search:
         tr = os.path.join(AA_OUT_CHECKED, "taxonomyResult")
     resources:
         mem_mb=128000,
-        cpus=16
+        cpus=16,
+        time_min=1440
     conda:
         "../envs/mmseqs2.yaml"
     shell:
