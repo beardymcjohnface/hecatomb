@@ -13,35 +13,24 @@ import sys
 
 """
 Summary:
-    # Step 0: Clumpify reads (https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/clumpify-guide/)
-    # Step 1: Remove 5' amplification primer
-    # Step 2: Remove 3' read through contaminant (Reverse complement of amplification primer + 6 bases of the adapter)
-    # Step 3: Remove primer free adapter (both orientations)
-    # Step 4: Remove adapter free primer (both orientations)
-    # Step 5: PhiX Removal and vector contamination removal
-    # Step 6: Host-removal
-    # Step 7: Trim low-quality bases
-    # Step 8: Remove bacterial contaminants reserving viral and aambiguous sequences
+    # Step 0: Preprocessing (Rule: 00_preprocessing.smk)
+    # Step 1: Taxonomic Assignment (Rule: 01_taxonomic_assignment.smk)
+    # Step 3: Compile Results (Rule: 02_compile_results.smk)
 """
-
-# if not config:
-#     sys.stderr.write("FATAL: Please define a config file using the --configfile command line option.\n")
-#     sys.stderr.write("examples are provided in the Git repo\n")
-#     sys.exit()
 
 
 # REQUIRED CONFIG
 DBDIR = config['Databases']
 READDIR = config['Reads']
+HOST = config['Host']
 
 # paths for our databases
 BACPATH = os.path.join(DBDIR, "bac_giant_unique_species")
-HOSTPATH = os.path.join(DBDIR, "human_masked")
+#HOSTPATH = os.path.join(DBDIR, "human_masked")
 CONPATH = os.path.join(DBDIR, "contaminants")
 BACBT2 = os.path.join(DBDIR, "bac_giant_unique_species", "bac_uniquespecies_giant.masked_Ns_removed")
-HOSTBT2 = os.path.join(DBDIR, "human_masked", "human_virus_masked")
-
-# database files
+#HOSTBT2 = os.path.join(DBDIR, "human_masked", "human_virus_masked") # TODO check usage
+HOSTPATH = os.path.join(DBDIR, "host", HOST)
 
 
 # paths for output data
@@ -50,6 +39,11 @@ LOGDIR = 'logs'
 CLUMPED = 'clumped'
 QC = 'QC'
 RESULTS = 'results'
+ASSEMBLY = 'ASSEMBLY'
+
+
+# LOGS = config['Output']['LOGS'] # TODO check usage
+
 
 for dir in [TMPDIR, LOGDIR]:
     if not os.path.exists(dir):
@@ -60,27 +54,41 @@ for dir in [TMPDIR, LOGDIR]:
 fatal_errors = False
 fatal_messages = []
 
-# output directories for our amino acid searches
-AA_OUT  = os.path.join(RESULTS, "mmseqs_aa_out")
-AA_OUT_CHECKED  = os.path.join(RESULTS, "mmseqs_aa_checked_out")
+###################################################################
+#                                                                 #
+# Protein databases                                               #
+#                                                                 #
+###################################################################
 
-# paths for our databases
+# Base path for protein sequence reference databases
 PROTPATH = os.path.join(DBDIR, "proteins")
 if not os.path.exists(PROTPATH):
     fatal_messages.append("protein databases")
     fatal_errors = True
 
+
 # The virus database, clustered at 99% with cd-hit and then compiled with mmseqs
-VIRDB = os.path.join(PROTPATH, "uniprot_virus_c99.db")
-if not os.path.exists(VIRDB):
-    fatal_messages.append(VIRDB)
+# VIRDB = os.path.join(PROTPATH, "uniprot_virus_c99.db") todo check usage
+# if not os.path.exists(VIRDB):
+#     fatal_messages.append(VIRDB)
+#     fatal_errors = True
+
+# PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt") todo check usage
+# if not os.path.exists(PHAGE_LINEAGES):
+#     fatal_messages.append("phages/phage_taxonomic_lineages.txt")
+
+# The virus protein database, clustered at 99% with cd-hit and then compiled with mmseqs
+UNIVIRDB = os.path.join(PROTPATH, "uniprot_virusDB")
+if not os.path.exists(UNIVIRDB):
+    fatal_messages.append(UNIVIRDB)
     fatal_errors = True
 
-PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt")
-if not os.path.exists(PHAGE_LINEAGES):
-    fatal_messages.append("phages/phage_taxonomic_lineages.txt")
-    fatal_errors = True
+# Secondary AA check database. Can be selected from config.yaml
+#AACHECKDB = os.path.join(PROTPATH, config['Paths']['Secondary_AA'])
 
+# output directories for our amino acid searches
+AA_OUT = os.path.join(RESULTS, "MMSEQS_AA_OUT")
+#AA_OUT_CHECKED = os.path.join(RESULTS, "MMSEQS_AA_OUT_CHECKED")
 
 ###################################################################
 #                                                                 #
@@ -88,27 +96,26 @@ if not os.path.exists(PHAGE_LINEAGES):
 #                                                                 #
 ###################################################################
 
-URVPATH = os.path.join(PROTPATH, "uniref_plus_virus")
-URVDB = os.path.join(URVPATH, "uniref50_virus.db") # uniref50 + viruses database
-if not os.path.exists(URVDB):
-    fatal_messages.append(URVDB)
-    fatal_errors = True
+#URVPATH = os.path.join(PROTPATH, "uniref_plus_virus")
+#URVDB = os.path.join(URVPATH, "uniref50_virus.db") # uniref50 + viruses database
+#if not os.path.exists(URVDB):
+#    fatal_messages.append(URVDB)
+#    fatal_errors = True
 
 # Nucleotide data
-NUCLPATH = os.path.join(DBDIR, "nucleotides")
-NTDB = os.path.join(NUCLPATH, "refseq_virus_nt_UniVec_masked", "nt.fnaDB")
-if not os.path.exists(NTDB):
-    fatal_messages.append(f"nucleotide database {NTDB}")
-    fatal_errors = True
+#NUCLPATH = os.path.join(DBDIR, "nucleotides")
+#NTDB = os.path.join(NUCLPATH, "refseq_virus_nt_UniVec_masked", "nt.fnaDB")
+#if not os.path.exists(NTDB):
+#    fatal_messages.append(f"nucleotide database {NTDB}")
+#    fatal_errors = True
 
-NT_OUT = os.path.join(RESULTS, "mmseqs_nt_out")
-if not os.path.exists(NT_OUT):
-    os.makedirs(NT_OUT)
+#NT_OUT = os.path.join(RESULTS, "mmseqs_nt_out")
+#if not os.path.exists(NT_OUT):
+#    os.makedirs(NT_OUT)
 
-NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
-if not os.path.exists(NT_CHECKED_OUT):
-    os.makedirs(NT_CHECKED_OUT)
-
+#NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
+#if not os.path.exists(NT_CHECKED_OUT):
+#    os.makedirs(NT_CHECKED_OUT)
 
 ###################################################################
 #                                                                 #
@@ -116,32 +123,41 @@ if not os.path.exists(NT_CHECKED_OUT):
 #                                                                 #
 ###################################################################
 
-TAXPATH  = os.path.join(DBDIR, "taxonomy")
-TAXTAX = os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql")
-if not os.path.exists(TAXTAX):
-    fatal_messages.append(f"taxonomizr database {TAXTAX}")
-    fatal_errors = True
 
-# Bacterial virus masked database for section 07 mmseqs pviral check
+# Bacterial virus masked database for section 07 mmseqs pviral check TODO check usage
 BVMDB = os.path.join(NUCLPATH, "bac_virus_masked", "nt.fnaDB")
 if not os.path.exists(BVMDB):
     fatal_messages.append(BVMDB)
     fatal_errors = True
 
+#PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt")
+#if not os.path.exists(PHAGE_LINEAGES):
+#    fatal_messages.append("phages/phage_taxonomic_lineages.txt")
+#    fatal_errors = True
 
-###################################################################
-#                                                                 #
-# The bacterial and host bbmap and bowtie2 indexes                #
-#                                                                 #
-###################################################################
+#TAXPATH  = os.path.join(DBDIR, "taxonomy")
+#TAXTAX = os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql")
+#if not os.path.exists(TAXTAX):
+#    fatal_messages.append(f"taxonomizr database {TAXTAX}")
+#    fatal_errors = True
+
+
+# Bacterial virus masked database for section 07 mmseqs pviral check
+
+#BVMDB = os.path.join(NUCLPATH, "bac_virus_masked", "nt.fnaDB")
+#if not os.path.exists(BVMDB):
+#    fatal_messages.append(BVMDB)
+#    fatal_errors = True
+
 
 # check to see if we have the right versions of the databases for
 # either bowtie or bbmap (default)
-# if config['Options']['use_bowtie']:
+# if config['Options']['use_bowtie']: TODO check usage
 for bti in [BACBT2, HOSTBT2]:
     if not os.path.exists(f"{bti}.1.bt2l") and not os.path.exists(f"{bti}.1.bt2"):
         fatal_messages.append(f"bowtie2 indexes for {bti}")
         fatal_errors = True
+
 
 if not os.path.exists(os.path.join(CONPATH, "line_sine.1.bt2")):
     fatal_messages.append("bowtie2 indexes for the line/sine database")
@@ -203,11 +219,11 @@ if len(SAMPLES) == 0:
     sys.stderr.write("You should complain to Rob\n")
     sys.exit()
 
-
 remove_leftmost_primerB_r1_input = os.path.join(QC, "step_0", PATTERN_R1 + ".good_out.s0.fastq")
 remove_leftmost_primerB_r2_input = os.path.join(QC, "step_0", PATTERN_R2 + ".good_out.s0.fastq")
 
 
+include: "rules/00_preprocessing.smk"
 include: "rules/00_prinseq.smk"
 include: "rules/00_contaminant_removal.smk"
 include: "rules/01_contaminant_removal_hosts_alt.smk"
@@ -223,31 +239,46 @@ include: "rules/09_long_table_out.smk"
 
 rule all:
     input:
-        # output of contaminant removal
-        #expand(os.path.join(QC, "step_9", PATTERN_R1 + ".viral_amb.fastq"), sample=SAMPLES),
-        # output of 02_cluster_count.smk
-        expand(os.path.join(QC, "counts", "{sample}_seqtable.txt"), sample=SAMPLES),
-        # these two inputs are the outputs from 03_seqtable.smk
-        #os.path.join(RESULTS, "seqtable_all.tsv"),
-        #os.path.join(RESULTS, "seqtable.tab2fx"),
-        # output from 04_mmseqs_pviral_aa
-        os.path.join(AA_OUT, "phage_tax_table.tsv"),
-        os.path.join(AA_OUT, "viruses_tax_table.tsv"),
-        os.path.join(AA_OUT, "pviral_aa_unclassified_seqs.fasta"),
-        # output from section 05_mmseqs_pviral_aa_check
-        os.path.join(AA_OUT_CHECKED, "taxonomyResult.firsthit.m8"),
-        os.path.join(AA_OUT_CHECKED, "taxonomyResult.report"),
-        os.path.join(AA_OUT_CHECKED, "viruses_checked_aa_table.tsv"),
-        os.path.join(AA_OUT_CHECKED, "viruses_checked_aa_tax_table.tsv"),
-        os.path.join(AA_OUT_CHECKED, "unclassified_checked_aa_seqs.fasta"),
-        # output from section 06_mmseqs_pviral_nt
-        os.path.join(NT_OUT, "resultDB.firsthit.m8"),
-        os.path.join(NT_CHECKED_OUT, "mmseqs_pviral_nt_lineage.tsv"),
-        # output from section 07_mmseqs_pviral_nt_check
-        os.path.join(NT_CHECKED_OUT, "phage_nt_seqs.fasta"),
-        os.path.join(NT_CHECKED_OUT, "pviral_virus_nt_seqs.fasta"),
-        os.path.join(NT_CHECKED_OUT, "mmseqs_pviral_nt_checked_lineage.tsv"),
-        # output from section 08_concatenate_results
+        os.path.join(RESULTS,"seqtable_all.tsv"),
+        os.path.join(RESULTS,"seqtable.fasta"),
+        os.path.join(RESULTS,"seqtable.faidx"),
+        os.path.join(RESULTS,"seqtable_properties.tsv"),
+        expand(os.path.join(ASSEMBLY,PATTERN_R1 + ".norm.fastq"), sample = SAMPLES),
+        expand(os.path.join(ASSEMBLY,PATTERN_R2 + ".norm.fastq"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,'{sample}','{sample}' + ".contigs.fa"),sample=SAMPLES),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","all_megahit_contigs.fasta"),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","all_megahit_contigs_size_selected.fasta"),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","all_megahit_contigs.stats"),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","all_megahit_contigs_size_selected.sketch"),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","FLYE","assembly.fasta"),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","FLYE","contig_dictionary.stats"),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","FLYE","contig_dictionary.sketch"),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}.aln.sam.gz"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}.umapped.fastq"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}.cov_stats"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}.rpkm"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}.statsfile"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}.scafstats"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}_counts.tmp"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}_TPM.tmp"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}_TPM"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}_TPM.final"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}_cov.tmp"),sample=SAMPLES),
+        expand(os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","{sample}_contig_counts.tsv"),sample=SAMPLES),
+        os.path.join(ASSEMBLY,"CONTIG_DICTIONARY","MAPPING","contig_count_table.tsv"),
+        # os.path.join(AA_OUT, "phage_tax_table.tsv"),
+        # os.path.join(AA_OUT, "viruses_tax_table.tsv"),
+        # os.path.join(AA_OUT, "pviral_aa_unclassified_seqs.fasta"),
+        # os.path.join(AA_OUT_CHECKED, "taxonomyResult.firsthit.m8"),
+        # os.path.join(AA_OUT_CHECKED, "taxonomyResult.report"),
+        # os.path.join(AA_OUT_CHECKED, "viruses_checked_aa_table.tsv"),
+        # os.path.join(AA_OUT_CHECKED, "viruses_checked_aa_tax_table.tsv"),
+        # os.path.join(AA_OUT_CHECKED, "unclassified_checked_aa_seqs.fasta"),
+        # os.path.join(NT_OUT, "resultDB.firsthit.m8"),
+        # os.path.join(NT_CHECKED_OUT, "mmseqs_pviral_nt_lineage.tsv"),
+        # os.path.join(NT_CHECKED_OUT, "phage_nt_seqs.fasta"),
+        # os.path.join(NT_CHECKED_OUT, "pviral_virus_nt_seqs.fasta"),
+        # os.path.join(NT_CHECKED_OUT, "mmseqs_pviral_nt_checked_lineage.tsv"),
         os.path.join(RESULTS, "viruses_tax_table.tsv"),
         os.path.join(RESULTS, "phage_tax_table.tsv"),
         os.path.join(RESULTS, "aa.aln.m8"),

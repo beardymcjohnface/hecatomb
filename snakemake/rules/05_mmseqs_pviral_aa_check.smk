@@ -294,7 +294,7 @@ rule non_viral_lineages:
  
 rule pull_non_viral_lineages:
     input:
-        fa = os.path.join(RESULTS, "seqtable.fasta"),
+        fa = os.path.join(RESULTS, "TAXTAX"),
         ls = os.path.join(AA_OUT_CHECKED, "unclassified_checked_aa_seqs.list")
     output:
         os.path.join(AA_OUT_CHECKED, "unclassified_checked_aa_seqs.fasta")
