@@ -70,13 +70,6 @@ if not os.path.exists(PROTPATH):
     fatal_messages.append("protein databases")
     fatal_errors = True
 
-
-# The virus database, clustered at 99% with cd-hit and then compiled with mmseqs
-VIRDB = os.path.join(PROTPATH, "uniprot_virus_c99.db")
-if not os.path.exists(VIRDB):
-    fatal_messages.append(VIRDB)
-    fatal_errors = True
-
 # PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt") todo check usage
 # if not os.path.exists(PHAGE_LINEAGES):
 #     fatal_messages.append("phages/phage_taxonomic_lineages.txt")
@@ -85,6 +78,12 @@ if not os.path.exists(VIRDB):
 UNIVIRDB = os.path.join(PROTPATH, "uniprot_virusDB")
 if not os.path.exists(UNIVIRDB):
     fatal_messages.append(UNIVIRDB)
+    fatal_errors = True
+
+# The virus database, clustered at 99% with cd-hit and then compiled with mmseqs
+VIRDB = os.path.join(UNIVIRDB, "uniprot_virus_c99.db")
+if not os.path.exists(VIRDB):
+    fatal_messages.append(VIRDB)
     fatal_errors = True
 
 # Secondary AA check database. Can be selected from config.yaml
