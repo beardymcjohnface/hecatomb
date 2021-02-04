@@ -229,6 +229,7 @@ remove_leftmost_primerB_r2_input = os.path.join(QC, "step_0", PATTERN_R2 + ".goo
 
 
 include: "rules/00_preprocessing.smk"
+include: "rules/01_assembly.smk"
 include: "rules/04_mmseqs_pviral_aa.smk"
 include: "rules/05_mmseqs_pviral_aa_check.smk"
 include: "rules/06_mmseqs_pviral_nt.smk"
