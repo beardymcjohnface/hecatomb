@@ -454,7 +454,7 @@ rule merge_seq_table:
         out = open(output[0], 'w')
         seqId = 0
         for sample in SAMPLES:
-            counts = open(os.path.join(QC, "CLUSTERED", "LINCLUST", "{sample}_R1.seqtable"), 'r')
+            counts = open(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{sample}_R1.seqtable"), 'r')
             line = counts.readline() # skip header
             for line in counts:
                 id = str(seqId).zfill(8)
