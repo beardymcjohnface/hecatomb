@@ -134,10 +134,10 @@ NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
 #     fatal_messages.append(BVMDB)
 #     fatal_errors = True
 
-#PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt")
-#if not os.path.exists(PHAGE_LINEAGES):
-#    fatal_messages.append("phages/phage_taxonomic_lineages.txt")
-#    fatal_errors = True
+PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt")
+if not os.path.exists(PHAGE_LINEAGES):
+   fatal_messages.append("phages/phage_taxonomic_lineages.txt")
+   fatal_errors = True
 
 TAXPATH  = os.path.join(DBDIR, "taxonomy")
 TAXTAX = os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql")
