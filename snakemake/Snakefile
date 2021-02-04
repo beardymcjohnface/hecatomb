@@ -110,11 +110,11 @@ AA_OUT_CHECKED = os.path.join(RESULTS, "MMSEQS_AA_OUT_CHECKED")
 #    fatal_messages.append(f"nucleotide database {NTDB}")
 #    fatal_errors = True
 
-#NT_OUT = os.path.join(RESULTS, "mmseqs_nt_out")
+NT_OUT = os.path.join(RESULTS, "mmseqs_nt_out")
 #if not os.path.exists(NT_OUT):
 #    os.makedirs(NT_OUT)
 
-#NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
+NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
 #if not os.path.exists(NT_CHECKED_OUT):
 #    os.makedirs(NT_CHECKED_OUT)
 
