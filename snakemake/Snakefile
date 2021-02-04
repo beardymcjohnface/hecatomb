@@ -115,6 +115,7 @@ NT_OUT = os.path.join(RESULTS, "mmseqs_nt_out")
 #    os.makedirs(NT_OUT)
 
 NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
+NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
 #if not os.path.exists(NT_CHECKED_OUT):
 #    os.makedirs(NT_CHECKED_OUT)
 
@@ -136,8 +137,8 @@ NT_CHECKED_OUT = os.path.join(RESULTS, "mmseqs_nt_checked_out")
 #    fatal_messages.append("phages/phage_taxonomic_lineages.txt")
 #    fatal_errors = True
 
-#TAXPATH  = os.path.join(DBDIR, "taxonomy")
-#TAXTAX = os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql")
+TAXPATH  = os.path.join(DBDIR, "taxonomy")
+TAXTAX = os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql")
 #if not os.path.exists(TAXTAX):
 #    fatal_messages.append(f"taxonomizr database {TAXTAX}")
 #    fatal_errors = True
