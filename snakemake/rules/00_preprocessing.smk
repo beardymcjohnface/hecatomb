@@ -430,7 +430,7 @@ rule create_individual_seqtables:
         uniq -c | \
         awk -F ' ' '{{print$2"\\t"$1}}' | \
         cut -f2 | \
-        sed "1i {sample}" > {output.counts}
+        sed "1i {wildcards.sample}" > {output.counts}
         
         paste {output.seqs} {output.counts} > {output.seqtable}
         """
