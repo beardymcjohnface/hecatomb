@@ -99,11 +99,11 @@ AA_OUT_CHECKED = os.path.join(RESULTS, "MMSEQS_AA_OUT_CHECKED")
 #                                                                 #
 ###################################################################
 
-#URVPATH = os.path.join(PROTPATH, "uniref_plus_virus")
-#URVDB = os.path.join(URVPATH, "uniref50_virus.db") # uniref50 + viruses database
-#if not os.path.exists(URVDB):
-#    fatal_messages.append(URVDB)
-#    fatal_errors = True
+URVPATH = os.path.join(PROTPATH, "uniref_plus_virus")
+URVDB = os.path.join(URVPATH, "uniref50_virus.db") # uniref50 + viruses database
+if not os.path.exists(URVDB):
+   fatal_messages.append(URVDB)
+   fatal_errors = True
 
 # Nucleotide data
 NUCLPATH = os.path.join(DBDIR, "nucleotides")
