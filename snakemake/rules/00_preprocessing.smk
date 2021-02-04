@@ -392,49 +392,77 @@ rule create_individual_seqtables:
         """
 
 
-rule merge_individual_seqtables:
+# rule merge_individual_seqtables:
+#     """
+#     Step 11: Merge individual sequence tables into combined seqtable
+#     """
+#     input:
+#         files = expand(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqtable"), sample=SAMPLES)
+#     output:
+#         seqtable = os.path.join(RESULTS, "seqtable_all.tsv"),
+#         tab2fx = temporary(os.path.join(RESULTS, "seqtable.tab2fx"))
+#     params:
+#         resultsdir = directory(RESULTS),
+#     benchmark:
+#         BENCHDIR + "/preprocessing/step_10/merge_seq_table.txt"
+#     # resources:
+#     #     mem_mb=100000,
+#     #     cpus=64
+#     params:
+#         resultsdir = directory(RESULTS),
+#     conda:
+#         "../envs/R.yaml"
+#     script:
+#         "../scripts/seqtable_merge.R"
+
+
+# rule convert_seqtable_tab_2_fasta:
+#     """
+#     Step 12: Convert tabular seqtable output to fasta
+#     """
+#     input:
+#         os.path.join(RESULTS, "seqtable.tab2fx")
+#     output:
+#         os.path.join(RESULTS, "seqtable.fasta")
+#     benchmark:
+#         BENCHDIR + "/preprocessing/step_10/convert_seqtable_tab_2_fasta.txt"
+#     resources:
+#         mem_mb=64000,
+#         cpus=16
+#     conda:
+#         "../envs/seqkit.yaml"
+#     shell:
+#         """
+#         seqkit tab2fx {input} -j {resources.cpus} -w 5000 -t dna -o {output}
+#         """
+
+
+rule merge_seq_table:
     """
-    Step 11: Merge individual sequence tables into combined seqtable
+    Reads the sequences and counts from each samples seqtable text file and converts to fasta format
+    for the rest of the pipline. 
     """
     input:
-        files = expand(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqtable"), sample=SAMPLES)
+        expand(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqtable"), sample=SAMPLES)
     output:
-        seqtable = os.path.join(RESULTS, "seqtable_all.tsv"),
-        tab2fx = temporary(os.path.join(RESULTS, "seqtable.tab2fx"))
+        fa = os.path.join(RESULTS,"seqtable.fasta")
     params:
         resultsdir = directory(RESULTS),
     benchmark:
-        BENCHDIR + "/preprocessing/step_10/merge_seq_table.txt"
-    # resources:
-    #     mem_mb=100000,
-    #     cpus=64
-    params:
-        resultsdir = directory(RESULTS),
-    conda:
-        "../envs/R.yaml"
-    script:
-        "../scripts/seqtable_merge.R"
-
-
-rule convert_seqtable_tab_2_fasta:
-    """
-    Step 12: Convert tabular seqtable output to fasta
-    """
-    input:
-        os.path.join(RESULTS, "seqtable.tab2fx")
-    output:
-        os.path.join(RESULTS, "seqtable.fasta")
-    benchmark:
-        BENCHDIR + "/preprocessing/step_10/convert_seqtable_tab_2_fasta.txt"
-    resources:
-        mem_mb=64000,
-        cpus=16
-    conda:
-        "../envs/seqkit.yaml"
-    shell:
-        """
-        seqkit tab2fx {input} -j {resources.cpus} -w 5000 -t dna -o {output}
-        """
+        "benchmarks/merge_seq_table.txt"
+    run:
+        out = open(output[0], 'w')
+        seqId = 0
+        for sample in SAMPLES:
+            counts = open(os.path.join(QC, 'counts', f'{sample}_seqtable.txt'), 'r')
+            line = counts.readline() # skip header
+            for line in counts:
+                id = str(seqId).zfill(8)
+                seqId = seqId + 1
+                l = line.split()
+                out.write(f'>{id}\ts={sample}\tc={l[1]}\n{l[0]}\n')
+            counts.close()
+        out.close()
 
 
 rule create_seqtable_index:
@@ -560,7 +588,7 @@ rule contig_reformating_and_stats:
     input:
         os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs.fasta")
     output:
-        rename = temporary(os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs.renamed.fasta")),
+        rename = temp(os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs.renamed.fasta")),
         size = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs_size_selected.fasta"),
         stats = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs.stats"),
         sketch = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs_size_selected.sketch")
