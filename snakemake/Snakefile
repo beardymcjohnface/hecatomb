@@ -39,7 +39,8 @@ LOGDIR = 'logs'
 CLUMPED = 'clumped'
 QC = 'QC'
 RESULTS = 'results'
-ASSEMBLY = 'ASSEMBLY'
+ASSEMBLY = 'assembly'
+STATS = 'stats'
 
 
 # LOGS = config['Output']['LOGS'] # TODO check usage
@@ -125,10 +126,10 @@ AA_OUT = os.path.join(RESULTS, "MMSEQS_AA_OUT")
 
 
 # Bacterial virus masked database for section 07 mmseqs pviral check TODO check usage
-BVMDB = os.path.join(NUCLPATH, "bac_virus_masked", "nt.fnaDB")
-if not os.path.exists(BVMDB):
-    fatal_messages.append(BVMDB)
-    fatal_errors = True
+# BVMDB = os.path.join(NUCLPATH, "bac_virus_masked", "nt.fnaDB")
+# if not os.path.exists(BVMDB):
+#     fatal_messages.append(BVMDB)
+#     fatal_errors = True
 
 #PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt")
 #if not os.path.exists(PHAGE_LINEAGES):
@@ -153,10 +154,10 @@ if not os.path.exists(BVMDB):
 # check to see if we have the right versions of the databases for
 # either bowtie or bbmap (default)
 # if config['Options']['use_bowtie']: TODO check usage
-for bti in [BACBT2, HOSTBT2]:
-    if not os.path.exists(f"{bti}.1.bt2l") and not os.path.exists(f"{bti}.1.bt2"):
-        fatal_messages.append(f"bowtie2 indexes for {bti}")
-        fatal_errors = True
+# for bti in [BACBT2, HOSTBT2]:
+#     if not os.path.exists(f"{bti}.1.bt2l") and not os.path.exists(f"{bti}.1.bt2"):
+#         fatal_messages.append(f"bowtie2 indexes for {bti}")
+#         fatal_errors = True
 
 
 if not os.path.exists(os.path.join(CONPATH, "line_sine.1.bt2")):

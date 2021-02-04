@@ -410,8 +410,6 @@ rule create_individual_seqtables:
         seqs=os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqs"),
         counts=os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".counts"),
         seqtable=os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqtable")
-    params:
-        prefix=PATTERN
     benchmark:
         "BENCHMARKS/preprocessing/step_10/individual_seq_tables_{sample}.txt"
     resources:
@@ -432,7 +430,7 @@ rule create_individual_seqtables:
         uniq -c | \
         awk -F ' ' '{{print$2"\\t"$1}}' | \
         cut -f2 | \
-        sed "1i {params.prefix}" > {output.counts}
+        sed "1i {sample}" > {output.counts}
         
         paste {output.seqs} {output.counts} > {output.seqtable}
         """
@@ -569,7 +567,7 @@ rule individual_sample_assembly:
         r1s = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".singletons.fastq"),
         r2s = os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".singletons.fastq")
     output:
-        contigs=os.path.join(ASSEMBLY, PATTERN, PATTERN + ".contigs.fa")
+        contigs=os.path.join(ASSEMBLY, '{sample}', "{sample}.contigs.fa")
     params:
         mh_dir=directory(os.path.join(ASSEMBLY, '{sample}')),
         contig_dic=directory(os.path.join(ASSEMBLY, "CONTIG_DICTIONARY"))
@@ -598,7 +596,7 @@ rule concatenate_contigs:
     
     """
     input:
-        lambda wildcards: expand(os.path.join(ASSEMBLY, PATTERN, PATTERN + ".contigs.fa"), sample=SAMPLES)
+        lambda wildcards: expand(os.path.join(ASSEMBLY, '{sample}', '{sample}' + ".contigs.fa"), sample=SAMPLES)
     output:
         os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs.fasta")
     shell:
@@ -699,12 +697,12 @@ rule coverage_calculations:
         r2 = os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".all.fastq"),
         ref = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "FLYE", "assembly.fasta")
     output:
-        sam=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".aln.sam.gz"),
-        unmap=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".umapped.fastq"),
-        covstats=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".cov_stats"),
-        rpkm=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".rpkm"),
-        statsfile=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".statsfile"),
-        scafstats=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".scafstats")
+        sam=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".aln.sam.gz"),
+        unmap=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".umapped.fastq"),
+        covstats=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".cov_stats"),
+        rpkm=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".rpkm"),
+        statsfile=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".statsfile"),
+        scafstats=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".scafstats")
     benchmark:
         "BENCHMARKS/assembly/coverage_calculations_{sample}.txt"
     log:
@@ -738,15 +736,15 @@ rule create_contig_count_table:
     
     """
     input:
-        rpkm = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".rpkm"),
-        covstats=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + ".cov_stats")
+        rpkm = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".rpkm"),
+        covstats=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".cov_stats")
     output:
-        counts_tmp = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + "_counts.tmp"),
-        TPM_tmp = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + "_TPM.tmp"),
-        TPM = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + "_TPM"),
-        TPM_final = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + "_TPM.final"),
-        cov_temp = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + "_cov.tmp"),
-        count_tbl = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + "_contig_counts.tsv")
+        counts_tmp = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + "_counts.tmp"),
+        TPM_tmp = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + "_TPM.tmp"),
+        TPM = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + "_TPM"),
+        TPM_final = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + "_TPM.final"),
+        cov_temp = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + "_cov.tmp"),
+        count_tbl = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + "_contig_counts.tsv")
     shell:
         """
         ## TPM Calculator
@@ -784,7 +782,7 @@ rule concatentate_contig_count_tables:
     """
     input:
         #lambda wildcards: expand(os.path.join(ASSEMBLY, PATTERN, PATTERN + ".contigs.fa"), sample=SAMPLES)
-        lambda wildcards: expand(os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", PATTERN + "_contig_counts.tsv"), sample=SAMPLES)
+        lambda wildcards: expand(os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + "_contig_counts.tsv"), sample=SAMPLES)
     output:
         os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING",  "contig_count_table.tsv")
     shell:
