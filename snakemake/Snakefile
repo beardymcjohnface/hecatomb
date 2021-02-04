@@ -72,10 +72,10 @@ if not os.path.exists(PROTPATH):
 
 
 # The virus database, clustered at 99% with cd-hit and then compiled with mmseqs
-# VIRDB = os.path.join(PROTPATH, "uniprot_virus_c99.db") todo check usage
-# if not os.path.exists(VIRDB):
-#     fatal_messages.append(VIRDB)
-#     fatal_errors = True
+VIRDB = os.path.join(PROTPATH, "uniprot_virus_c99.db")
+if not os.path.exists(VIRDB):
+    fatal_messages.append(VIRDB)
+    fatal_errors = True
 
 # PHAGE_LINEAGES = os.path.join(DBDIR, "phages", "phage_taxonomic_lineages.txt") todo check usage
 # if not os.path.exists(PHAGE_LINEAGES):
