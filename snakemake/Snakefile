@@ -37,8 +37,8 @@ HOSTPATH = os.path.join(DBDIR, "hosts", HOST + "_virus_masked.fasta")
 # paths for output data
 RESULTS = 'results'
 WORKDIR = 'processing'
+LOGDIR = 'logs'
 TMPDIR = os.path.join(WORKDIR, 'tmp')
-LOGDIR = os.path.join(WORKDIR,'logs')
 STDERR = os.path.join(WORKDIR,'stderr')
 BENCHDIR = os.path.join(WORKDIR, 'benchmarks')
 CLUMPED = os.path.join(WORKDIR,'clumped')
@@ -50,7 +50,7 @@ STATS = os.path.join(WORKDIR,'stats')
 # LOGS = config['Output']['LOGS'] # TODO check usage
 
 
-for dir in [TMPDIR, LOGDIR]:
+for dir in [TMPDIR, WORKDIR, LOGDIR]:
     if not os.path.exists(dir):
         os.makedirs(dir, exist_ok=True)
 
