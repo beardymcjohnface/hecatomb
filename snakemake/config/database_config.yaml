@@ -4,8 +4,9 @@ contaminants: vector_contaminants.fa.gz
 host: human_virus_masked.fasta
 
 # temp fix
-Mem: 100
-Threads: 64
+Mem: 64 # Gb
+Threads: 16
+
 QSCORE: 15 # Read quality trimming score (rule remove_low_quality in 00_preprocessing.smk)
 MINLENGTH: 100 # Read minimum length (rule remove_low_quality in 00_preprocessing.smk)
 ENTROPY: 0.5 # Read minimum entropy (rule remove_low_quality in 00_preprocessing.smk)
