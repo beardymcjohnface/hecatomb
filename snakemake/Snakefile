@@ -106,11 +106,11 @@ AA_OUT_CHECKED = os.path.join(RESULTS, "MMSEQS_AA_OUT_CHECKED")
 #    fatal_errors = True
 
 # Nucleotide data
-#NUCLPATH = os.path.join(DBDIR, "nucleotides")
-#NTDB = os.path.join(NUCLPATH, "refseq_virus_nt_UniVec_masked", "nt.fnaDB")
-#if not os.path.exists(NTDB):
-#    fatal_messages.append(f"nucleotide database {NTDB}")
-#    fatal_errors = True
+NUCLPATH = os.path.join(DBDIR, "nucleotides")
+NTDB = os.path.join(NUCLPATH, "refseq_virus_nt_UniVec_masked", "nt.fnaDB")
+if not os.path.exists(NTDB):
+   fatal_messages.append(f"nucleotide database {NTDB}")
+   fatal_errors = True
 
 NT_OUT = os.path.join(RESULTS, "mmseqs_nt_out")
 #if not os.path.exists(NT_OUT):
