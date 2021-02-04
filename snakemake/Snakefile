@@ -239,7 +239,7 @@ include: "rules/09_long_table_out.smk"
 
 rule all:
     input:
-        os.path.join(RESULTS,"seqtable_all.tsv"),
+        #os.path.join(RESULTS,"seqtable_all.tsv"),
         os.path.join(RESULTS,"seqtable.fasta"),
         os.path.join(RESULTS,"seqtable.faidx"),
         os.path.join(RESULTS,"seqtable_properties.tsv"),
