@@ -443,7 +443,7 @@ rule merge_seq_table:
     for the rest of the pipline. 
     """
     input:
-        expand(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqtable"), sample=SAMPLES)
+        expand(os.path.join(QC, "CLUSTERED", "LINCLUST", "{sample}_R1.seqtable"), sample=SAMPLES)
     output:
         fa = os.path.join(RESULTS,"seqtable.fasta")
     params:
@@ -454,7 +454,7 @@ rule merge_seq_table:
         out = open(output[0], 'w')
         seqId = 0
         for sample in SAMPLES:
-            counts = open(os.path.join(QC, 'counts', f'{sample}_seqtable.txt'), 'r')
+            counts = open(os.path.join(QC, "CLUSTERED", "LINCLUST", "{sample}_R1.seqtable"), 'r')
             line = counts.readline() # skip header
             for line in counts:
                 id = str(seqId).zfill(8)
