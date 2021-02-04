@@ -337,7 +337,7 @@ rule cluster_similar_sequences:
         temp(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + "_all_seqs.fasta"))
     params:
         respath=os.path.join(QC, "CLUSTERED", "LINCLUST"),
-        tmppath=os.path.join(QC, "CLUSTERED", "LINCLUST", "TMP"),
+        tmppath=os.path.join(QC, "CLUSTERED", "LINCLUST", "{sample}_TMP"),
         prefix=PATTERN_R1
     benchmark:
         BENCHDIR + "/preprocessing/step_08/cluster_similar_seqs_{sample}.txt"
