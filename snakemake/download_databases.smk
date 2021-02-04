@@ -69,7 +69,7 @@ rule all:
         os.path.join(NUCLPATH, "bac_virus_masked/nt.fnaDB.dbtype"),
         os.path.join(NUCLPATH, "refseq_virus_nt_UniVec_masked/nt.fnaDB.index"),
         os.path.join(NUCLPATH, "bac_virus_masked/nt.fnaDB.index"),
-        os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql"),
+        #os.path.join(TAXPATH, "taxonomizr_accessionTaxa.sql"),
         multiext(os.path.join(PROTPATH, "uniprot_virus_c99"), ".db_mapping", ".db_names.dmp", ".db_nodes.dmp", ".db_merged.dmp", ".db_delnodes.dmp"),
         multiext(os.path.join(URVPATH, "uniref50_virus"), ".db_mapping", ".db_names.dmp", ".db_nodes.dmp", ".db_merged.dmp", ".db_delnodes.dmp")
 

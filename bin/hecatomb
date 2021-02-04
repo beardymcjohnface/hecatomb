@@ -43,7 +43,7 @@ hecatomb [install/run] --snake="--force --cleanup-metadata seqtable.fasta"
 )
 parser.add_argument('command', choices=['install', 'run'])
 parser.add_argument('--reads', help='Directory containing seq data')
-parser.add_argument('--host', help='Host genome for contaminant removal', default='human_virus_contaminants.fa.gz')
+parser.add_argument('--host', help='Host genome for contaminant removal', default='human')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
 parser.add_argument('--snake',
                     help='Pass one or more commands to Snakemake e.g. --snake=--unlock',
@@ -111,7 +111,7 @@ def install():
         runJobs = '-j 16'
     sys.stderr.write("Checking and downloading database files\n")
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_databases.smk'))
-    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Databases={DBDIR} tmp=tmp'
+    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Databases={DBDIR}'
     if subprocess.call(runCommand.split())==0:
         sys.stderr.write("Database installation finished successfully\n")
     else:
@@ -132,7 +132,7 @@ def run():
         runJobs = f'--profile {args.cluster}'
     else:
         runJobs = '-j 16'
-    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Databases={DBDIR} Reads={args.reads}'
+    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Databases={DBDIR} Reads={args.reads} Host={args.host}'
     if subprocess.call(runCommand.split()) == 0:
         sys.stderr.write("Hecatomb finished successfully\n")
     else:
