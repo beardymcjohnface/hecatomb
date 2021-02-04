@@ -17,7 +17,7 @@ rule remove_exact_dups:
     output:
         temp(os.path.join(QC, "step_10", PATTERN_R1 + ".s9.deduped.out.fastq"))
     benchmark:
-        "benchmarks/remove_exact_dups_{sample}.txt"
+        BENCHDIR + "/remove_exact_dups_{sample}.txt"
     resources:
         mem_mb=20000,
         cpus=8
@@ -41,7 +41,7 @@ rule deduplicate:
         fa = temp(os.path.join(QC, "step_11", PATTERN_R1 + ".best.fasta")),
         stats = temp(os.path.join(QC, "step_11", "{sample}_stats.txt"))
     benchmark:
-        "benchmarks/deduplicate_{sample}.txt"
+        BENCHDIR + "/deduplicate_{sample}.txt"
     resources:
         mem_mb=20000,
         cpus=8
@@ -64,7 +64,7 @@ rule extract_seq_counts:
     output:
         temp(os.path.join(QC, "step_12", PATTERN_R1 + ".reformated.fasta"))
     benchmark:
-        "benchmarks/extract_seq_counts_{sample}.txt"
+        BENCHDIR + "/extract_seq_counts_{sample}.txt"
     resources:
         mem_mb=20000,
         cpus=8

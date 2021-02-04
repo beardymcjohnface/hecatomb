@@ -41,9 +41,9 @@ rule remove_leftmost_primerB:
         r2 = temp(os.path.join(TMPDIR, "step_01", PATTERN_R2 + ".s1.out.fastq")),
         stats = os.path.join(STATS, "step_01", "{sample}.s1.stats.tsv")
     benchmark:
-        "BENCHMARKS/preprocessing/step_01/removeprimerB_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_01/removeprimerB_{sample}.txt"
     log:
-        "LOGS/step_01/{sample}.s1.log"
+        STDERR + "/step_01/{sample}.s1.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -75,9 +75,9 @@ rule remove_3prime_contaminant:
         r2 = temp(os.path.join(TMPDIR, "step_02", PATTERN_R2 + ".s2.out.fastq")),
         stats = os.path.join(STATS, "step_02", "{sample}.s2.stats.tsv")
     benchmark:
-        "BENCHMARKS/preprocessing/step_02/remove_3prime_contaminant_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_02/remove_3prime_contaminant_{sample}.txt"
     log:
-        "LOGS/step_02/{sample}.s2.log"
+        STDERR + "/step_02/{sample}.s2.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -108,9 +108,9 @@ rule remove_primer_free_adapter:
         r2 = temp(os.path.join(TMPDIR, "step_03", PATTERN_R2 + ".s3.out.fastq")),
         stats = os.path.join(STATS, "step_03", "{sample}.s3.stats.tsv")
     benchmark:
-        "BENCHMARKS/preprocessing/step_03/remove_primer_free_adapter_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_03/remove_primer_free_adapter_{sample}.txt"
     log:
-        "LOGS/step_03/{sample}.s3.log"
+        STDERR + "/step_03/{sample}.s3.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -141,9 +141,9 @@ rule remove_adapter_free_primer:
         r2 = temp(os.path.join(TMPDIR, "step_04", PATTERN_R2 + ".s4.out.fastq")),
         stats = os.path.join(STATS, "step_04", "{sample}.s4.stats.tsv")
     benchmark:
-        "BENCHMARKS/preprocessing/step_04/remove_adapter_free_primer_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_04/remove_adapter_free_primer_{sample}.txt"
     log:
-        "LOGS/step_04/{sample}.s4.log"
+        STDERR + "/step_04/{sample}.s4.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -174,9 +174,9 @@ rule remove_vector_contamination:
         r2 = temp(os.path.join(TMPDIR, "step_05", PATTERN_R2 + ".s5.out.fastq")),
         stats = os.path.join(STATS, "step_05", "{sample}.s5.stats.tsv")
     benchmark:
-        "BENCHMARKS/preprocessing/step_05/remove_vector_contamination_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_05/remove_vector_contamination_{sample}.txt"
     log:
-        "LOGS/step_05/{sample}.s5.log"
+        STDERR + "/step_05/{sample}.s5.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -206,9 +206,9 @@ rule remove_low_quality:
         r2 = temp(os.path.join(TMPDIR, PATTERN_R2 + ".clean.out.fastq")),
         stats = os.path.join(STATS, "step_06", "{sample}.s6.stats.tsv")
     benchmark:
-        "BENCHMARKS/preprocessing/step_06/remove_low_quality_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_06/remove_low_quality_{sample}.txt"
     log:
-        "LOGS/step_06/{sample}.s6.log"
+        STDERR + "/step_06/{sample}.s6.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -244,9 +244,9 @@ rule host_removal_mapping:
     output:
         sam = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".sam")
     benchmark:
-        "BENCHMARKS/preprocessing/step_07/host_removal_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_07/host_removal_{sample}.txt"
     log:
-        "LOGS/host_removal/{sample}.host_removal.log"
+        STDERR + "/host_removal/{sample}.host_removal.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -272,9 +272,9 @@ rule extract_host_unmapped:
         r2 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".unmapped.fastq")),
         singletons = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".unmapped.singletons.fastq"))
     benchmark:
-        "BENCHMARKS/preprocessing/step_07/extract_host_unmapped_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_07/extract_host_unmapped_{sample}.txt"
     log:
-        "LOGS/host_removal/{sample}.extract_host_unmapped.log"
+        STDERR + "/host_removal/{sample}.extract_host_unmapped.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -300,9 +300,9 @@ rule nonhost_read_repair:
         r1 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".singletons.fastq")),
         r2 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".singletons.fastq"))
     benchmark:
-        "BENCHMARKS/preprocessing/step_07/nonhost_read_repair_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_07/nonhost_read_repair_{sample}.txt"
     log:
-        "LOGS/host_removal/{sample}.nonhost_read_repair.log"
+        STDERR + "/host_removal/{sample}.nonhost_read_repair.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -329,7 +329,7 @@ rule nonhost_read_combine:
         r1 = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".all.fastq"),
         r2 = os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".all.fastq")
     benchmark:
-        "BENCHMARKS/preprocessing/step_07/nonhost_read_combine_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_07/nonhost_read_combine_{sample}.txt"
     resources:
         mem_mb=100000,
         cpus=64
@@ -350,9 +350,9 @@ rule remove_exact_dups:
     output:
         os.path.join(QC, "CLUSTERED", PATTERN_R1 + ".deduped.out.fastq")
     benchmark:
-        "BENCHMARKS/preprocessing/step_08/remove_exact_dups_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_08/remove_exact_dups_{sample}.txt"
     log:
-        "LOGS/clustering/{sample}.dedupe.log"
+        STDERR + "/clustering/{sample}.dedupe.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -382,9 +382,9 @@ rule cluster_similar_sequences:
         tmppath=os.path.join(QC, "CLUSTERED", "LINCLUST", "TMP"),
         prefix=PATTERN_R1
     benchmark:
-        "BENCHMARKS/preprocessing/step_08/cluster_similar_seqs_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_08/cluster_similar_seqs_{sample}.txt"
     log:
-        "LOGS/clustering/{sample}.linclust.log"
+        STDERR + "/clustering/{sample}.linclust.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -411,7 +411,7 @@ rule create_individual_seqtables:
         counts=os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".counts"),
         seqtable=os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqtable")
     benchmark:
-        "BENCHMARKS/preprocessing/step_10/individual_seq_tables_{sample}.txt"
+        BENCHDIR + "/preprocessing/step_10/individual_seq_tables_{sample}.txt"
     resources:
         mem_mb=100000,
         cpus=64
@@ -449,7 +449,7 @@ rule merge_individual_seqtables:
     params:
         resultsdir = directory(RESULTS),
     benchmark:
-        "BENCHMARKS/preprocessing/step_10/merge_seq_table.txt"
+        BENCHDIR + "/preprocessing/step_10/merge_seq_table.txt"
     resources:
         mem_mb=100000,
         cpus=64
@@ -469,7 +469,7 @@ rule convert_seqtable_tab_2_fasta:
     output:
         os.path.join(RESULTS, "seqtable.fasta")
     benchmark:
-        "BENCHMARKS/preprocessing/step_10/convert_seqtable_tab_2_fasta.txt"
+        BENCHDIR + "/preprocessing/step_10/convert_seqtable_tab_2_fasta.txt"
     resources:
         mem_mb=100000,
         cpus=64
@@ -511,7 +511,7 @@ rule calculate_seqtable_sequence_properties:
     output:
         os.path.join(RESULTS, "seqtable_properties.tsv")
     benchmark:
-        "BENCHMARKS/preprocessing/step_14/calculate_seqtable_sequence_properties.txt"
+        BENCHDIR + "/preprocessing/step_14/calculate_seqtable_sequence_properties.txt"
     resources:
         mem_mb=100000,
         cpus=64
@@ -537,9 +537,9 @@ rule assembly_kmer_normalization:
         r1_norm = os.path.join(ASSEMBLY, PATTERN_R1 + ".norm.fastq"),
         r2_norm = os.path.join(ASSEMBLY, PATTERN_R2 + ".norm.fastq")
     benchmark:
-        "BENCHMARKS/preprocessing/assembly/kmer_normalization_{sample}.txt"
+        BENCHDIR + "/preprocessing/assembly/kmer_normalization_{sample}.txt"
     log:
-        "LOGS/assembly/{sample}.kmer_normalization.log"
+        STDERR + "/assembly/{sample}.kmer_normalization.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -572,9 +572,9 @@ rule individual_sample_assembly:
         mh_dir=directory(os.path.join(ASSEMBLY, '{sample}')),
         contig_dic=directory(os.path.join(ASSEMBLY, "CONTIG_DICTIONARY"))
     benchmark:
-        "BENCHMARKS/preprocessing/assembly/megahit_{sample}.txt"
+        BENCHDIR + "/preprocessing/assembly/megahit_{sample}.txt"
     log:
-        "LOGS/assembly/{sample}.megahit.log"
+        STDERR + "/assembly/{sample}.megahit.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -620,9 +620,9 @@ rule contig_reformating_and_stats:
         stats = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs.stats"),
         sketch = os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "all_megahit_contigs_size_selected.sketch")
     benchmark:
-        "BENCHMARKS/preprocessing/contig_reformating.txt"
+        BENCHDIR + "/preprocessing/contig_reformating.txt"
     log:
-        "LOGS/assembly/contig_reformating.log"
+        STDERR + "/assembly/contig_reformating.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -664,9 +664,9 @@ rule population_assembly:
     params:
         flye_out=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "FLYE")
     benchmark:
-        "BENCHMARKS/assembly/population_assembly.txt"
+        BENCHDIR + "/assembly/population_assembly.txt"
     log:
-        "LOGS/assembly/population_assembly.log"
+        STDERR + "/assembly/population_assembly.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -704,9 +704,9 @@ rule coverage_calculations:
         statsfile=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".statsfile"),
         scafstats=os.path.join(ASSEMBLY, "CONTIG_DICTIONARY", "MAPPING", '{sample}' + ".scafstats")
     benchmark:
-        "BENCHMARKS/assembly/coverage_calculations_{sample}.txt"
+        BENCHDIR + "/assembly/coverage_calculations_{sample}.txt"
     log:
-        "LOGS/assembly/coverage_calculations_{sample}.log"
+        STDERR + "/assembly/coverage_calculations_{sample}.log"
     resources:
         mem_mb=100000,
         cpus=64
@@ -793,9 +793,4 @@ rule concatentate_contig_count_tables:
         sed -i '1i sample_id\tcontig_id\tlength\treads\tRPKM\tFPKM\tTPM\tavg_fold_cov\tcontig_GC\tcov_perc\tcov_bases\tmedian_fold_cov' {output};
         
         """
-    
-    
-
-
-
 

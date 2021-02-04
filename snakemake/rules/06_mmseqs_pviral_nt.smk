@@ -21,7 +21,8 @@ rule create_nt_querydb:
         dbt = os.path.join(NT_OUT, "seqtable_queryDB.dbtype")
     params:
         st = os.path.join(NT_OUT, "seqtable_queryDB")
-    benchmark: "benchmarks/create_nt_querydb.txt"
+    benchmark:
+        BENCHDIR + "/create_nt_querydb.txt"
     resources:
         mem_mb=100000,
     conda:
@@ -42,7 +43,8 @@ rule nt_search:
     params:
         st = os.path.join(NT_OUT, "seqtable_queryDB"),
         rdb = os.path.join(NT_OUT, "resultDB")
-    benchmark: "benchmarks/nt_search.txt"
+    benchmark:
+        BENCHDIR + "/nt_search.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -65,7 +67,8 @@ rule nt_top_hit:
     params:
         rdb = os.path.join(NT_OUT, "resultDB"),
         rdbfh = os.path.join(NT_OUT, "resultDB.firsthit")
-    benchmark: "benchmarks/nt_top_hit.txt"
+    benchmark:
+        BENCHDIR + "/nt_top_hit.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -87,7 +90,8 @@ rule nt_to_m8:
     params:
         st = os.path.join(NT_OUT, "seqtable_queryDB"),
         rdbfh = os.path.join(NT_OUT, "resultDB.firsthit")
-    benchmark: "benchmarks/nt_to_m8.txt"
+    benchmark:
+        BENCHDIR + "/nt_to_m8.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -105,7 +109,8 @@ rule nt_annotate:
         linout = os.path.join(NT_CHECKED_OUT, "mmseqs_pviral_nt_lineage.tsv")
     params:
         taxtax = TAXTAX
-    benchmark: "benchmarks/nt_annotate.txt"
+    benchmark:
+        BENCHDIR + "/nt_annotate.txt"
     resources:
         mem_mb=100000,
     conda:

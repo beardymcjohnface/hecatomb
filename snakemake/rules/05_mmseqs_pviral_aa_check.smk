@@ -31,7 +31,8 @@ rule create_viral_seqs_db:
         os.path.join(AA_OUT, "viruses_seqs.fasta")
     output:
         os.path.join(AA_OUT_CHECKED, "viral_seqs_queryDB")
-    benchmark: "benchmarks/create_viral_seqs_db.txt"
+    benchmark:
+        BENCHDIR + "/create_viral_seqs_db.txt"
     resources:
         mem_mb=20000
     conda:
@@ -55,7 +56,8 @@ rule viral_seqs_tax_search:
         db = os.path.join(AA_OUT_CHECKED, "taxonomyResult.dbtype"),
         idx = os.path.join(AA_OUT_CHECKED, "taxonomyResult.index"),
         tmp = temp(directory(os.path.join(TMPDIR, 'viral_seqs_tax_search')))
-    benchmark: "benchmarks/viral_seqs_tax_search.txt"
+    benchmark:
+        BENCHDIR + "/viral_seqs_tax_search.txt"
     params:
         tr = os.path.join(AA_OUT_CHECKED, "taxonomyResult")
     resources:
@@ -85,7 +87,8 @@ rule viral_seqs_convertalis:
         tr = os.path.join(AA_OUT_CHECKED, "taxonomyResult")
     output:
         os.path.join(AA_OUT_CHECKED, "aln.m8")
-    benchmark: "benchmarks/viral_seqs_convertalis.txt"
+    benchmark:
+        BENCHDIR + "/viral_seqs_convertalis.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -111,7 +114,8 @@ rule viral_seqs_lca:
     output:
         os.path.join(AA_OUT_CHECKED, "lca.db.dbtype"),
         os.path.join(AA_OUT_CHECKED, "lca.db.index")
-    benchmark: "benchmarks/viral_seqs_lca.txt"
+    benchmark:
+        BENCHDIR + "/viral_seqs_lca.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -137,7 +141,8 @@ rule extract_top_hit:
     output:
         os.path.join(AA_OUT_CHECKED, "taxonomyResult.firsthit.dbtype"),
         os.path.join(AA_OUT_CHECKED, "taxonomyResult.firsthit.index")
-    benchmark: "benchmarks/extract_top_hit.txt"
+    benchmark:
+        BENCHDIR + "/extract_top_hit.txt"
     resources:
         mem_mb=20000,
         cpus=16
@@ -160,7 +165,8 @@ rule convertalis_vsqd:
         os.path.join(AA_OUT_CHECKED, "taxonomyResult.firsthit.m8")
     params:
         trfh = os.path.join(AA_OUT_CHECKED, "taxonomyResult.firsthit")
-    benchmark: "benchmarks/convertalis_vsqd.txt"
+    benchmark:
+        BENCHDIR + "/convertalis_vsqd.txt"
     resources:
         mem_mb=20000,
         cpus=16
@@ -183,7 +189,8 @@ rule create_taxtable_vsqd:
         lcadb = os.path.join(AA_OUT_CHECKED, "lca.db")
     output:
         os.path.join(AA_OUT_CHECKED, "taxonomyResult.tsv")
-    benchmark: "benchmarks/create_taxtable_vsqd.txt"
+    benchmark:
+        BENCHDIR + "/create_taxtable_vsqd.txt"
     resources:
         mem_mb=20000,
         cpus=16
@@ -205,7 +212,8 @@ rule create_kraken_vsqd:
         lcadb = os.path.join(AA_OUT_CHECKED, "lca.db")
     output:
         os.path.join(AA_OUT_CHECKED, "taxonomyResult.report")
-    benchmark: "benchmarks/create_kraken_vsqd.txt"
+    benchmark:
+        BENCHDIR + "/create_kraken_vsqd.txt"
     resources:
         mem_mb=20000,
         cpus=16

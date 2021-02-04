@@ -27,7 +27,7 @@ rule remove_leftmost_primerB:
     benchmark:
         "benchmarks/removeprimerB_{sample}.txt"
     log:
-        "LOGS/step_01/{sample}.s1.log"
+        STDERR + "/step_01/{sample}.s1.log"
     resources:
         mem_mb=20000,
         cpus=8
@@ -59,7 +59,7 @@ rule remove_3prime_contaminant:
     benchmark:
         "benchmarks/remove_3prime_contaminant_{sample}.txt"
     log:
-        "LOGS/step_02/{sample}.s2.log"
+        STDERR + "/step_02/{sample}.s2.log"
     resources:
         mem_mb=20000,
         cpus=8
@@ -90,7 +90,7 @@ rule remove_primer_free_adapter:
     benchmark:
         "benchmarks/remove_primer_free_adapter_{sample}.txt"
     log:
-        "LOGS/step_03/{sample}.s3.log"
+        STDERR + "/step_03/{sample}.s3.log"
     resources:
         mem_mb=20000,
         cpus=8
@@ -121,7 +121,7 @@ rule remove_adapter_free_primer:
     benchmark:
         "benchmarks/remove_adapter_free_primer_{sample}.txt"
     log:
-        "LOGS/step_04/{sample}.s4.log"
+        STDERR + "/step_04/{sample}.s4.log"
     resources:
         mem_mb=20000,
         cpus=8
@@ -152,7 +152,7 @@ rule remove_vector_contamination:
     benchmark:
         "benchmarks/remove_vector_contamination_{sample}.txt"
     log:
-        "LOGS/step_05/{sample}.s5.log"
+        STDERR + "/step_05/{sample}.s5.log"
     resources:
         mem_mb=20000,
         cpus=8
@@ -182,7 +182,7 @@ rule remove_low_quality:
     benchmark:
         "benchmarks/remove_low_quality_{sample}.txt"
     log:
-        "LOGS/step_06/{sample}.s6.log"
+        STDERR + "/step_06/{sample}.s6.log"
     resources:
         mem_mb=20000,
         cpus=8
@@ -212,7 +212,7 @@ rule host_mapping:
     benchmark:
         "benchmarks/host_mapping_{sample}.txt"
     log:
-        "LOGS/host_removal/{sample}.host_removal.log"
+        STDERR + "/host_removal/{sample}.host_removal.log"
     resources:
         mem_mb=100000,
         cpus=8
@@ -305,7 +305,7 @@ rule remove_exact_dups:
     benchmark:
         "benchmarks/remove_exact_dups_{sample}.txt"
     log:
-        "LOGS/clustering/{sample}.dedupe.log"
+        STDERR + "/clustering/{sample}.dedupe.log"
     resources:
         mem_mb=20000,
         cpus=8
@@ -336,7 +336,7 @@ rule cluster_similar_sequences:
     benchmark:
         "benchmark/cluster_similar_seqs_{sample}.txt"
     log:
-        "LOGS/clustering/{sample}.linclust.log"
+        STDERR + "/clustering/{sample}.linclust.log"
     resources:
         mem_mb=64000,
         cpus=24

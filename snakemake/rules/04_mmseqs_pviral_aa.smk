@@ -35,7 +35,7 @@ rule create_seqtable_db:
     output:
         os.path.join(AA_OUT, "seqtable_query.db")
     benchmark:
-        "benchmarks/create_seqtable_db.txt"
+        BENCHDIR + "/create_seqtable_db.txt"
     resources:
         mem_mb=20000,
     conda:
@@ -54,7 +54,7 @@ rule seqtable_taxsearch:
     params:
         tr = os.path.join(AA_OUT, "taxonomyResult")
     benchmark:
-        "benchmarks/seqtable_taxsearch.txt"
+        BENCHDIR + "/seqtable_taxsearch.txt"
     resources:
         mem_mb=20000,
         cpus=16,
@@ -79,7 +79,7 @@ rule seqtable_convert_alignments:
     output:
         os.path.join(AA_OUT, "aln.m8")
     benchmark:
-        "benchmarks/seqtable_convert_alignments.txt"
+        BENCHDIR + "/seqtable_convert_alignments.txt"
     resources:
         mem_mb=20000,
         cpus=16
@@ -100,7 +100,7 @@ rule seqtable_lca:
         lc = os.path.join(AA_OUT, "lca.db"),
         tr = os.path.join(AA_OUT, "taxonomyResult")
     benchmark:
-        "benchmarks/seqtable_lca.txt"
+        BENCHDIR + "/seqtable_lca.txt"
     resources:
         mem_mb=20000,
         cpus=16
@@ -121,7 +121,7 @@ rule seqtable_taxtable_tsv:
     output:
         os.path.join(AA_OUT, "taxonomyResult.tsv")
     benchmark:
-        "benchmarks/seqtable_taxtable_tsv.txt"
+        BENCHDIR + "/seqtable_taxtable_tsv.txt"
     resources:
         mem_mb=20000,
         cpus=16
@@ -139,7 +139,7 @@ rule seqtable_create_kraken:
     output:
         os.path.join(AA_OUT, "taxonomyResult.report")
     benchmark:
-        "benchmarks/seqtable_create_kraken.txt"
+        BENCHDIR + "/seqtable_create_kraken.txt"
     resources:
         mem_mb=20000,
         cpus=16

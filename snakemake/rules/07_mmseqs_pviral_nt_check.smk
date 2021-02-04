@@ -95,7 +95,8 @@ rule create_nt_db:
          dbt = os.path.join(NT_CHECKED_OUT, "seqtable_queryDB.dbtype")
     params:
          st = os.path.join(NT_CHECKED_OUT, "seqtable_queryDB")
-    benchmark: "benchmarks/create_nt_db.txt"
+    benchmark:
+        BENCHDIR + "/create_nt_db.txt"
     resources:
         mem_mb=100000,
     conda:
@@ -120,7 +121,8 @@ rule nt_search_checked:
     params:
         st = os.path.join(NT_CHECKED_OUT, "seqtable_queryDB"),
         rdb = os.path.join(NT_CHECKED_OUT, "resultDB")
-    benchmark: "benchmarks/nt_search_checked.txt"
+    benchmark:
+        BENCHDIR + "/nt_search_checked.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -147,7 +149,8 @@ rule filter_nt_db:
     params:
         rdb = os.path.join(NT_CHECKED_OUT, "resultDB"),
         rfh = os.path.join(NT_CHECKED_OUT, "resultDB.firsthit")
-    benchmark: "benchmarks/filter_nt_db.txt"
+    benchmark:
+        BENCHDIR + "/filter_nt_db.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -173,7 +176,8 @@ rule convert_nt_alias:
     params:
         fh = os.path.join(NT_CHECKED_OUT, "resultDB.firsthit"),
         sq = os.path.join(NT_CHECKED_OUT, "seqtable_queryDB"),
-    benchmark: "benchmarks/convert_nt_alias.txt"
+    benchmark:
+        BENCHDIR + "/convert_nt_alias.txt"
     resources:
         mem_mb=100000,
         cpus=16
@@ -195,7 +199,8 @@ rule annotate_checked_nt:
         linout = os.path.join(NT_CHECKED_OUT, "mmseqs_pviral_nt_checked_lineage.tsv")
     params:
         taxtax = TAXTAX
-    benchmark: "benchmarks/annotate_checked_nt.txt"
+    benchmark:
+        BENCHDIR + "/annotate_checked_nt.txt"
     resources:
         mem_mb=100000,
     conda:

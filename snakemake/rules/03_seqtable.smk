@@ -17,7 +17,7 @@ rule merge_seq_table:
     params:
         resultsdir = directory(RESULTS),
     benchmark:
-        "benchmarks/merge_seq_table.txt"
+        BENCHDIR + "/merge_seq_table.txt"
     run:
         out = open(output[0], 'w')
         seqId = 0
