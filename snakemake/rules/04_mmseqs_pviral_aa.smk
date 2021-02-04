@@ -47,7 +47,7 @@ rule create_seqtable_db:
 rule seqtable_taxsearch:
     input:
         sq = os.path.join(AA_OUT, "seqtable_query.db"),
-        db = os.path.join(PROTPATH, "uniprot_virus_c99.db")
+        db = os.path.join(UNIVIRDB, "uniprot_virus_c99.db")
     output:
         tr = os.path.join(AA_OUT, "taxonomyResult.dbtype"),
         tmp = temp(directory(os.path.join(TMPDIR, 'seqtable_taxsearch')))
@@ -72,7 +72,7 @@ rule seqtable_taxsearch:
 rule seqtable_convert_alignments:
     input:
         sq = os.path.join(AA_OUT, "seqtable_query.db"),
-        db = os.path.join(PROTPATH, "uniprot_virus_c99.db"),
+        db = os.path.join(UNIVIRDB, "uniprot_virus_c99.db"),
         tr = os.path.join(AA_OUT, "taxonomyResult.dbtype")
     params:
         tr = os.path.join(AA_OUT, "taxonomyResult")
@@ -134,7 +134,7 @@ rule seqtable_taxtable_tsv:
 
 rule seqtable_create_kraken:
     input:
-        db = os.path.join(PROTPATH, "uniprot_virus_c99.db"),
+        db = os.path.join(UNIVIRDB, "uniprot_virus_c99.db"),
         lc = os.path.join(AA_OUT, "lca.db")
     output:
         os.path.join(AA_OUT, "taxonomyResult.report")
