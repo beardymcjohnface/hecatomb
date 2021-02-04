@@ -23,6 +23,9 @@ Summary:
 DBDIR = config['Databases']
 READDIR = config['Reads']
 HOST = config['Host']
+sysMem = config['Mem']
+sysThreads = config['Threads']
+
 
 # paths for our databases
 BACPATH = os.path.join(DBDIR, "bac_giant_unique_species")

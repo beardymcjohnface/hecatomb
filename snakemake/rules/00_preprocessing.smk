@@ -57,7 +57,7 @@ rule remove_leftmost_primerB:
             stats={output.stats} \
             k=16 hdist=1 mink=11 ktrim=l restrictleft=20 \
             removeifeitherbad=f trimpolya=10 ordered=t rcomp=f ow=t \
-            -Xmx{config[System][Memory]}g 2> {log}
+            -Xmx{sysMem}g 2> {log}
         """
 
 rule remove_3prime_contaminant:
@@ -90,7 +90,7 @@ rule remove_3prime_contaminant:
             out={output.r1} out2={output.r2} \
             stats={output.stats} \
             k=16 hdist=1 mink=11 ktrim=r removeifeitherbad=f ordered=t rcomp=f ow=t \
-            -Xmx{config[System][Memory]}g 2> {log}
+            -Xmx{sysMem}g 2> {log}
         """
 
 rule remove_primer_free_adapter:
@@ -123,7 +123,7 @@ rule remove_primer_free_adapter:
             out={output.r1} out2={output.r2} \
             stats={output.stats} \
             k=16 hdist=1 mink=10 ktrim=r removeifeitherbad=f ordered=t rcomp=t ow=t \
-            -Xmx{config[System][Memory]}g 2> {log}
+            -Xmx{sysMem}g 2> {log}
         """
 
 rule remove_adapter_free_primer:
@@ -156,7 +156,7 @@ rule remove_adapter_free_primer:
             out={output.r1} out2={output.r2} \
             stats={output.stats} \
             k=16 hdist=0 removeifeitherbad=f ordered=t rcomp=t ow=t \
-            -Xmx{config[System][Memory]}g 2> {log}
+            -Xmx{sysMem}g 2> {log}
         """
 
 rule remove_vector_contamination:
@@ -189,7 +189,7 @@ rule remove_vector_contamination:
             out={output.r1} out2={output.r2} \
             stats={output.stats} \
             k=31 hammingdistance=1 ordered=t ow=t \
-            -Xmx{config[System][Memory]}g 2> {log}
+            -Xmx{sysMem}g 2> {log}
         """
         
 rule remove_low_quality:
@@ -224,7 +224,7 @@ rule remove_low_quality:
             entropy={config[ENTROPY]} \
             trimq={config[QSCORE]} \
             minlength={config[MINLENGTH]} \
-            -Xmx{config[System][Memory]}g 2> {log} 
+            -Xmx{sysMem}g 2> {log} 
         """
 
 rule host_removal_mapping:
@@ -254,7 +254,7 @@ rule host_removal_mapping:
         "../envs/minimap2.yaml"
     shell:
         """
-        minimap2 -ax sr -t {config[System][Threads]} {input.hostpath} {input.r1} {input.r2} 2> {log} | \
+        minimap2 -ax sr -t {sysThreads} {input.hostpath} {input.r1} {input.r2} 2> {log} | \
         samtools view -F 2048 -h | \
         samtools view -f 4 -h > {output.sam} 2> {log};
         """
@@ -311,7 +311,7 @@ rule nonhost_read_repair:
     shell:
         """
         reformat.sh in={input.singletons} out={output.r1} out2={output.r2} \
-        -Xmx{config[System][Memory]}g 2> {log}
+        -Xmx{sysMem}g 2> {log}
         """
 
 rule nonhost_read_combine:
@@ -362,7 +362,7 @@ rule remove_exact_dups:
         """
         dedupe.sh in={input} out={output} \
         ac=f ow=t \
-        -Xmx{config[System][Memory]}g 2> {log}
+        -Xmx{sysMem}g 2> {log}
         """
           
 rule cluster_similar_sequences:
@@ -394,7 +394,7 @@ rule cluster_similar_sequences:
         """ 
         mmseqs easy-linclust {input} {params.respath}/{params.prefix} {params.tmppath} \
         --kmer-per-seq-scale 0.3 \
-        -c 0.95 --cov-mode 1 --threads {config[System][Threads]} &>> {log}
+        -c 0.95 --cov-mode 1 --threads {sysThreads} &>> {log}
         """
         
 rule create_individual_seqtables:
@@ -419,8 +419,8 @@ rule create_individual_seqtables:
         "../envs/seqkit.yaml"
     shell:
         """
-        seqkit sort {input.seqs} --quiet -j {config[System][Threads]} -w 5000 -t dna | \
-        seqkit fx2tab -j {config[System][Threads]} -w 5000 -t dna | \
+        seqkit sort {input.seqs} --quiet -j {sysThreads} -w 5000 -t dna | \
+        seqkit fx2tab -j {sysThreads} -w 5000 -t dna | \
         sed 's/\\t\\+$//' | \
         cut -f2,3 | \
         sed '1i sequence' > {output.seqs}
@@ -477,7 +477,7 @@ rule convert_seqtable_tab_2_fasta:
         "../envs/seqkit.yaml"
     shell:
         """
-        seqkit tab2fx {input} -j {config[System][Threads]} -w 5000 -t dna -o {output}
+        seqkit tab2fx {input} -j {sysThreads} -w 5000 -t dna -o {output}
         """
 
 rule create_seqtable_index:
@@ -519,7 +519,7 @@ rule calculate_seqtable_sequence_properties:
         "../envs/seqkit.yaml"
     shell:
         """
-        seqkit fx2tab -j {config[System][Threads]} --gc -H {input} | cut -f1,4 > {output}
+        seqkit fx2tab -j {sysThreads} --gc -H {input} | cut -f1,4 > {output}
         """
 
 rule assembly_kmer_normalization:
@@ -552,7 +552,7 @@ rule assembly_kmer_normalization:
         out={output.r1_norm} out2={output.r2_norm} \
         target=100 \
         ow=t \
-        -Xmx{config[System][Memory]}g 2> {log}
+        -Xmx{sysMem}g 2> {log}
     """
 
 rule individual_sample_assembly:
@@ -632,12 +632,12 @@ rule contig_reformating_and_stats:
         """
         rename.sh in={input} out={output.rename} \
         ow=t \
-        -Xmx{config[System][Memory]}g;
+        -Xmx{sysMem}g;
         
         reformat.sh in={output.rename} out={output.size} \
         ml={config[MINLENGTH]} \
         ow=t \
-        -Xmx{config[System][Memory]}g;
+        -Xmx{sysMem}g;
         
         statswrapper.sh in={input} out={output.stats} \
         format=2 \
@@ -646,7 +646,7 @@ rule contig_reformating_and_stats:
         sendsketch.sh in={output.size} out={output.sketch} \
         address=nt mode=sequence format=3 \
         ow=t \
-        -Xmx{config[System][Memory]}g 2> {log};
+        -Xmx{sysMem}g 2> {log};
         """
 
 rule population_assembly:
@@ -683,7 +683,7 @@ rule population_assembly:
         sendsketch.sh in={output.assembly} out={output.sketch} \
         address=nt mode=sequence format=3 \
         ow=t \
-        -Xmx{config[System][Memory]}g 2> {log};
+        -Xmx{sysMem}g 2> {log};
         """
 
 rule coverage_calculations:
@@ -726,7 +726,7 @@ rule coverage_calculations:
         scafstats={output.scafstats} \
         maxindel=100 minid=90 \
         ow=t 2> \
-        -Xmx{config[System][Memory]}g 2> {log};
+        -Xmx{sysMem}g 2> {log};
         """
 
 rule create_contig_count_table:
