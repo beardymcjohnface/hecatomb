@@ -47,11 +47,7 @@ rule long_sample_table:
         out.write('id\tsample\tcount\tnt/aa\tali_len\tali_perc\tali_eval\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tBaltimore\tBaltimoreGroup\n')
         for line in tx_fh:
             l = line.rstrip().split('\t')
-            try:
-                l[1:1] = counts[str(l[0])]
-            except KeyError:
-                sys.stderr.write(f'seq ID {l[0]} not in {input.fa}???')
-                exit(1)
+            l[1:1] = counts[str(l[0])]
             try:
                 l[3:3] = nt_ali[l[0]]
                 l[3:3] = 'nt'
