@@ -89,7 +89,7 @@ rule add_crown_to_marriage:
                     except KeyError:
                         pass
             try:
-                l.append(balt[l[6]])
+                l.append(str(x) for x in balt[l[6]])
             except KeyError:
                 l.append(['',''])
             out.write('\t'.join(str(x) for x in l)
