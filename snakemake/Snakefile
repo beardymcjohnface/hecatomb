@@ -32,6 +32,7 @@ BACPATH = os.path.join(DBDIR, "bac_giant_unique_species")
 CONPATH = os.path.join(DBDIR, "contaminants")
 BACBT2 = os.path.join(DBDIR, "bac_giant_unique_species", "bac_uniquespecies_giant.masked_Ns_removed")
 HOSTPATH = os.path.join(DBDIR, "hosts", HOST + "_virus_masked.fasta")
+HOSTINDEX = os.path.join(DBDIR, "hosts", HOST + "_virus_masked.fasta.idx")
 
 
 # paths for output data

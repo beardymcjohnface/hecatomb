@@ -215,6 +215,26 @@ rule remove_low_quality:
         """
 
 
+rule create_host_index:
+    """
+    Create the minimap2 index for mapping to the host; this will save a ton of time.
+    """
+    input:
+        HOSTPATH,
+        os.path.join(CONPATH, "line_sine.fasta")
+    output:
+        HOSTINDEX
+    benchmark:
+        BENCHDIR + "/preprocessing/create_minimap_host_index.txt"
+    resources:
+        mem_mb=64000,
+        cpus=16
+    conda:
+        "../envs/minimap2.yaml"
+    shell:
+        "minimap2 -d {output} <(cat {input})"
+
+
 rule host_removal_mapping:
     """
     Step 07a: Host removal. Must define host in config file (see Paths: Host: in config.yaml). Host should be masked of 
@@ -226,8 +246,7 @@ rule host_removal_mapping:
     input:
         r1 = os.path.join(TMPDIR, PATTERN_R1 + ".clean.out.fastq"),
         r2 = os.path.join(TMPDIR, PATTERN_R2 + ".clean.out.fastq"),
-        hostpath = HOSTPATH,
-        linesine = os.path.join(CONPATH,"line_sine.fasta")
+        host = HOSTINDEX
     output:
         r1=temp(os.path.join(QC,"HOST_REMOVED",PATTERN_R1 + ".unmapped.fastq")),
         r2=temp(os.path.join(QC,"HOST_REMOVED",PATTERN_R2 + ".unmapped.fastq")),
@@ -246,7 +265,7 @@ rule host_removal_mapping:
     shell:
         """
         minimap2 -ax sr -t {resources.cpus} --secondary=no \
-            <({input.hostpath} {input.linesine}) {input.r1} {input.r2} 2> {log.mm} \
+            {input.host} {input.r1} {input.r2} 2> {log.mm} \
             | samtools view -f 4 -h \
             | samtools fastq -NO -1 {output.r1} -2 {output.r2} -s {output.singletons} \
                 -0 /dev/null 2> {log.fq}
