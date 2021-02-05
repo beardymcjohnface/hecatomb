@@ -696,7 +696,7 @@ Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Tunavirus	Shigella virus 
 Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Tunavirus	Shigella virus Sfin1	dsDNA	I
 Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Tunavirus	Shigella virus SH6	dsDNA	I
 Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Tunavirus	Shigella virus Shfl1	dsDNA	I
-Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Tunavirus	Shigella virus ISF002	dsDNA	I
+Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Tunavirus	Shigella√ävirus√äISF002	dsDNA	I
 Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae		Cronobacter virus Esp2949-1	dsDNA	I
 Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Eclunavirus	Enterobacter virus EcL1	dsDNA	I
 Uroviricota	Caudoviricetes	Caudovirales	Drexlerviridae	Gyeonggidovirus	Cronobacter virus PhiCS01	dsDNA	I
@@ -6465,7 +6465,7 @@ Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Paraguay
 Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Pirital mammarenavirus	ssRNA(-)	V
 Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Planalto mammarenavirus	ssRNA(-)	V
 Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Ryukyu mammarenavirus	ssRNA(-)	V
-Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Serra do Navio mammarenavirus 	ssRNA(-)	V
+Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Serra do Navio mammarenavirus√ä	ssRNA(-)	V
 Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Solwezi mammarenavirus	ssRNA(-)	V
 Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Souris mammarenavirus	ssRNA(-)	V
 Negarnaviricota	Ellioviricetes	Bunyavirales	Arenaviridae	Mammarenavirus	Tacaribe mammarenavirus	ssRNA(-)	V
