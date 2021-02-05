@@ -47,9 +47,6 @@ ASSEMBLY = os.path.join(WORKDIR,'assembly')
 STATS = os.path.join(WORKDIR,'stats')
 
 
-# LOGS = config['Output']['LOGS'] # TODO check usage
-
-
 for dir in [TMPDIR, WORKDIR, LOGDIR]:
     if not os.path.exists(dir):
         os.makedirs(dir, exist_ok=True)
