@@ -45,7 +45,7 @@ rule long_sample_table:
         fa_fh.close()
         # parse and expand the virus tax table
         tx_fh = open(input.tx, 'r')
-        line = ix_fh.readline()
+        line = tx_fh.readline()
         out = open(output[0],'w')
         out.write('id\tsample\tcount\tnt/aa\tali_len\tali_perc\tali_eval\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tBaltimore\tBaltimoreGroup\n')
         for line in tx_fh:
