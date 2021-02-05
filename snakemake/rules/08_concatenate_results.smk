@@ -90,10 +90,10 @@ rule add_crown_to_marriage:
                         pass
             try:
                 balt[l[6]]
-                l.append(str(x) for x in balt[l[6]])
+                l += balt[l[6]]
             except KeyError:
-                l.append(['',''])
-            out.write('\t'.join(str(x) for x in l))
+                l += ['','']
+            out.write('\t'.join(l))
             out.write('\n')
         table.close()
         out.close()
