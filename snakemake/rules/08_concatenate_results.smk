@@ -65,11 +65,7 @@ rule add_crown_to_marriage:
             try:
                 balt[l[4]]
             except KeyError:
-                try:
-                    balt[l[4]] = [l[7],l[8]]
-                except:
-                    sys.stderr.write(line)
-                    exit(1)
+                balt[l[4]] = [l[6],l[7]]
             # attach child taxon to parent designations e.g. key=species, value=genus
             for i in range(5, 0, -1):
                 if l[i] == '' or l[i-1] == '':
