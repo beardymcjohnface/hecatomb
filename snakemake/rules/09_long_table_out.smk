@@ -38,10 +38,7 @@ rule long_sample_table:
                 l[0].replace('>','')
                 l[1].replace('s=','')
                 l[2].replace('c=','')
-                try:
-                    counts[l[0]]
-                except KeyError:
-                    counts[l[0]] = [l[1],l[2]]
+                counts[l[0]] = [l[1],l[2]]
         fa_fh.close()
         # parse and expand the virus tax table
         tx_fh = open(input.tx, 'r')
