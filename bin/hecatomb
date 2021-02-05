@@ -41,7 +41,7 @@ hecatomb [install/run] --snake=--unlock --snake=--touch
 hecatomb [install/run] --snake="--force --cleanup-metadata seqtable.fasta"
 '''
 )
-parser.add_argument('command', choices=['install', 'run'])
+parser.add_argument('command', choices=['install', 'run', 'addHost'])
 parser.add_argument('--reads', help='Directory containing seq data')
 parser.add_argument('--host', help='Host genome for contaminant removal', default='human')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
@@ -139,11 +139,19 @@ def run():
         sys.stderr.write("ERROR: Hecatomb run failed\n")
 
 
+def addHost():
+    """
+    Add a new host to the Hecatomb database
+    :return:
+    """
+    pass
+
+
 # Run the program
 if args.cluster:
     initialiseCluster(args.cluster)
 
-commands = {'install':install, 'run':run}
+commands = {'install':install, 'run':run, 'addHost':addHost}
 commands[args.command]()
 
 time.sleep(1)
