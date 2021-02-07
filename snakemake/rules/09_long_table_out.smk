@@ -2,7 +2,7 @@
 
 rule long_sample_table:
     """
-    Make a long table per sample
+    Make a long table with everything
     """
     input:
         tx = os.path.join(RESULTS, "viruses_tax_table.tsv"),
@@ -49,7 +49,7 @@ rule long_sample_table:
         tx_fh = open(input.tx, 'r')
         line = tx_fh.readline()
         out = open(output[0],'w')
-        out.write('id\tsample\tcount\tnt/aa\tali_len\tali_perc\tali_eval\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tBaltimore\tBaltimoreGroup\n')
+        out.write('id\tsample\tcount\tnt_aa\tali_perc\tali_len\tali_eval\tKingdom\tPhylum\tClass\tOrder\tFamily\tGenus\tSpecies\tBaltimore\tBaltimoreGroup\n')
         for line in tx_fh:
             l = line.rstrip().split('\t')
             try:
@@ -59,11 +59,11 @@ rule long_sample_table:
                 exit(1)
             try:
                 l[3:3] = nt_ali[l[0]]
-                l[3:3] = 'nt'
+                l[3:3] = ['nt']
             except KeyError:
                 try:
-                    l[3:3] = aa_ali[l[0]]
-                    l[3:3] = 'aa'
+                    l[3:3] = [ aa_ali[l[0]] * 3 ]
+                    l[3:3] = ['aa']
                 except KeyError:
                     sys.stderr.write(f'seq ID {l[0]} not in either {input.aa} or {input.nt}???')
                     exit(1)
