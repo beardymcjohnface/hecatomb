@@ -11,6 +11,8 @@ rule long_sample_table:
         aa = os.path.join(AA_OUT_CHECKED, "taxonomyResult.firsthit.m8")
     output:
         os.path.join(RESULTS, 'big_table.tsv')
+    resources:
+        mem_mb=16000
     run:
         def slurpAli(fh):
             d = {}
