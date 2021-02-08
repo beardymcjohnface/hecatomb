@@ -478,7 +478,7 @@ rule merge_seq_table:
             counts = open(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{sample}_R1.seqtable"), 'r')
             line = counts.readline() # skip header
             for line in counts:
-                id = str(seqId).zfill(8)
+                id = 's' + str(seqId).zfill(8)
                 seqId = seqId + 1
                 l = line.split()
                 out.write(f'>{id}\ts={sample}\tc={l[1]}\n{l[0]}\n')
