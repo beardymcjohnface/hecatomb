@@ -58,12 +58,12 @@ rule long_sample_table:
                 sys.stderr.write(f'seq ID {l[0]} not in {input.fa}???')
                 exit(1)
             try:
-                l[3:3] = nt_ali[l[0]]
-                l[3:3] = ['nt']
+                l[3:3] = [ aa_ali[l[0]] * 3 ]
+                l[3:3] = ['aa']
             except KeyError:
                 try:
-                    l[3:3] = [ aa_ali[l[0]] * 3 ]
-                    l[3:3] = ['aa']
+                    l[3:3] = nt_ali[l[0]]
+                    l[3:3] = ['nt']
                 except KeyError:
                     sys.stderr.write(f'seq ID {l[0]} not in either {input.aa} or {input.nt}???')
                     exit(1)
