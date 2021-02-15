@@ -289,6 +289,8 @@ rule pull_unclassified_seqs:
     output:
         os.path.join(AA_OUT, "pviral_aa_unclassified_seqs.fasta")
         #os.path.join(AA_OUT, "unclassified_seqs.fasta")
+    resources:
+        mem_mb = 8000
     shell:
         """
         grep --no-group-separator -A 1 -Fwf {input.ls} {input.fa} > {output}

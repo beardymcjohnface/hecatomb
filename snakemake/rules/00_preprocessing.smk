@@ -248,9 +248,7 @@ rule host_removal_mapping:
         r2 = os.path.join(TMPDIR, PATTERN_R2 + ".clean.out.fastq"),
         host = HOSTINDEX
     output:
-        r1=temp(os.path.join(QC,"HOST_REMOVED",PATTERN_R1 + ".unmapped.fastq")),
-        r2=temp(os.path.join(QC,"HOST_REMOVED",PATTERN_R2 + ".unmapped.fastq")),
-        singletons=temp(os.path.join(QC,"HOST_REMOVED",PATTERN_R1 + ".unmapped.singletons.fastq"))
+        os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".all.fastq")
     benchmark:
         BENCHDIR + "/preprocessing/step_07/host_removal_{sample}.txt"
     log:
@@ -262,63 +260,62 @@ rule host_removal_mapping:
         cpus=16
     conda:
         "../envs/minimap2.yaml"
-    shell:
+    shell: # todo, fix this bandaid solution for paired fastq files
         """
         minimap2 -ax sr -t {resources.cpus} --secondary=no \
             {input.host} {input.r1} {input.r2} 2> {log.mm} \
             | samtools view -f 4 -h \
-            | samtools fastq -NO -1 {output.r1} -2 {output.r2} -s {output.singletons} \
-                -0 /dev/null 2> {log.fq}
+            | samtools fastq -NO > {output} 2> {log.fq}
         """
 
 
-rule nonhost_read_repair:
-    """
-    Step 07c: Parse R1/R2 singletons (if singletons at all)
-    """
-    input:
-        singletons = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".unmapped.singletons.fastq")
-    output:
-        r1 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".singletons.fastq")),
-        r2 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".singletons.fastq"))
-    benchmark:
-        BENCHDIR + "/preprocessing/step_07/nonhost_read_repair_{sample}.txt"
-    log:
-        STDERR + "/host_removal/{sample}.nonhost_read_repair.log"
-    resources:
-        mem_mb=8000,
-        cpus=1
-    conda:
-        "../envs/bbmap.yaml"
-    shell:
-        """
-        reformat.sh in={input.singletons} out={output.r1} out2={output.r2} \
-            -Xmx{resources.mem_mb}m 2> {log}
-        """
-
-
-rule nonhost_read_combine:
-    """
-    Step 07d: Combine R1+R1_singletons and R2+R2_singletons
-    """
-    input:
-        r1 = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".unmapped.fastq"),
-        r2 = os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".unmapped.fastq"),
-        r1s = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".singletons.fastq"),
-        r2s = os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".singletons.fastq")
-    output:
-        r1 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".all.fastq")),
-        r2 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".all.fastq"))
-    benchmark:
-        BENCHDIR + "/preprocessing/step_07/nonhost_read_combine_{sample}.txt"
-    # resources:
-    #     mem_mb=100000,
-    #     cpus=64
-    shell:
-        """
-        cat {input.r1} {input.r1s} > {output.r1};
-        cat {input.r2} {input.r2s} > {output.r2}
-        """
+# rule nonhost_read_repair:
+#     """
+#     Step 07c: Parse R1/R2 singletons (if singletons at all)
+#     """
+#     input:
+#         singletons = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".unmapped.singletons.fastq")
+#     output:
+#         r1 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".singletons.fastq")),
+#         r2 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".singletons.fastq"))
+#     benchmark:
+#         BENCHDIR + "/preprocessing/step_07/nonhost_read_repair_{sample}.txt"
+#     log:
+#         STDERR + "/host_removal/{sample}.nonhost_read_repair.log"
+#     resources:
+#         mem_mb=8000,
+#         cpus=1
+#     conda:
+#         "../envs/bbmap.yaml"
+#     shell:
+#         """
+#         reformat.sh in={input.singletons} out={output.r1} out2={output.r2} \
+#             -Xmx{resources.mem_mb}m 2> {log}
+#         """
+#
+#
+# rule nonhost_read_combine:
+#     """
+#     Step 07d: Combine R1+R1_singletons and R2+R2_singletons
+#     """
+#     input:
+#         r1 = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".unmapped.fastq"),
+#         r2 = os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".unmapped.fastq"),
+#         r1s = os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".singletons.fastq"),
+#         r2s = os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".singletons.fastq")
+#     output:
+#         r1 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".all.fastq")),
+#         r2 = temp(os.path.join(QC, "HOST_REMOVED", PATTERN_R2 + ".all.fastq"))
+#     benchmark:
+#         BENCHDIR + "/preprocessing/step_07/nonhost_read_combine_{sample}.txt"
+#     # resources:
+#     #     mem_mb=100000,
+#     #     cpus=64
+#     shell:
+#         """
+#         cat {input.r1} {input.r1s} > {output.r1};
+#         cat {input.r2} {input.r2s} > {output.r2}
+#         """
 
 
 rule remove_exact_dups:
