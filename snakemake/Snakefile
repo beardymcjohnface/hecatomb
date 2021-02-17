@@ -20,7 +20,6 @@ Summary:
 
 
 # REQUIRED CONFIG
-DBDIR = config['Databases']
 READDIR = config['Reads']
 HOST = config['Host']
 sysMem = config['Mem']
@@ -28,6 +27,7 @@ sysThreads = config['Threads']
 
 
 # paths for our databases
+DBDIR = os.path.join(workflow.basedir, '../databases')
 BACPATH = os.path.join(DBDIR, "bac_giant_unique_species")
 CONPATH = os.path.join(DBDIR, "contaminants")
 BACBT2 = os.path.join(DBDIR, "bac_giant_unique_species", "bac_uniquespecies_giant.masked_Ns_removed")

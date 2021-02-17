@@ -18,7 +18,7 @@ if not config:
 
 
 # Directory paths
-DBDIR = config['Databases']
+DBDIR = os.path.join(workflow.basedir, '../databases')
 TMPDIR = 'tmp'
 LOG = 'logs'
 # paths for our databases
