@@ -31,8 +31,8 @@ sysThreads = config['Threads']
 BACPATH = os.path.join(DBDIR, "bac_giant_unique_species")
 CONPATH = os.path.join(DBDIR, "contaminants")
 BACBT2 = os.path.join(DBDIR, "bac_giant_unique_species", "bac_uniquespecies_giant.masked_Ns_removed")
-HOSTPATH = os.path.join(DBDIR, "hosts", HOST + "_virus_masked.fasta")
-HOSTINDEX = os.path.join(DBDIR, "hosts", HOST + "_virus_masked.fasta.idx")
+HOSTPATH = os.path.join(DBDIR, "hosts", f"{HOST}_virus_masked.fasta")
+HOSTINDEX = os.path.join(DBDIR, "hosts", f"{HOST}_virus_masked.fasta.idx")
 
 
 # paths for output data
@@ -222,8 +222,8 @@ if len(SAMPLES) == 0:
     sys.stderr.write("You should complain to Rob\n")
     sys.exit()
 
-remove_leftmost_primerB_r1_input = os.path.join(QC, "step_0", PATTERN_R1 + ".good_out.s0.fastq")
-remove_leftmost_primerB_r2_input = os.path.join(QC, "step_0", PATTERN_R2 + ".good_out.s0.fastq")
+remove_leftmost_primerB_r1_input = os.path.join(QC, "step_0", f"{PATTERN_R1}.good_out.s0.fastq")
+remove_leftmost_primerB_r2_input = os.path.join(QC, "step_0", f"{PATTERN_R2}.good_out.s0.fastq")
 
 
 include: "rules/00_preprocessing.smk"

@@ -31,13 +31,13 @@ rule remove_leftmost_primerB:
         r2 = os.path.join(READDIR, PATTERN_R2 + file_extension),
         primers = os.path.join(CONPATH, "primerB.fa")
     output:
-        r1 = temp(os.path.join(TMPDIR, "step_01", PATTERN_R1 + ".s1.out.fastq")),
-        r2 = temp(os.path.join(TMPDIR, "step_01", PATTERN_R2 + ".s1.out.fastq")),
+        r1 = temp(os.path.join(TMPDIR, "step_01", f"{PATTERN_R1}.s1.out.fastq")),
+        r2 = temp(os.path.join(TMPDIR, "step_01", f"{PATTERN_R2}.s1.out.fastq")),
         stats = os.path.join(STATS, "step_01", "{sample}.s1.stats.tsv")
     benchmark:
-        BENCHDIR + "/preprocessing/step_01/removeprimerB_{sample}.txt"
+        os.path.join(BENCHDIR, "preprocessing/step_01/removeprimerB_{sample}.txt")
     log:
-        STDERR + "/step_01/{sample}.s1.log"
+        os.path.join(STDERR, "step_01/{sample}.s1.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -60,17 +60,17 @@ rule remove_3prime_contaminant:
     Step 02: Remove 3' read through contaminant
     """
     input:
-        r1 = os.path.join(TMPDIR, "step_01", PATTERN_R1 + ".s1.out.fastq"),
-        r2 = os.path.join(TMPDIR, "step_01", PATTERN_R2 + ".s1.out.fastq"),
+        r1 = os.path.join(TMPDIR, "step_01", f"{PATTERN_R1}.s1.out.fastq"),
+        r2 = os.path.join(TMPDIR, "step_01", f"{PATTERN_R2}.s1.out.fastq"),
         primers = os.path.join(CONPATH, "rc_primerB_ad6.fa")
     output:
-        r1 = temp(os.path.join(TMPDIR, "step_02", PATTERN_R1 + ".s2.out.fastq")),
-        r2 = temp(os.path.join(TMPDIR, "step_02", PATTERN_R2 + ".s2.out.fastq")),
+        r1 = temp(os.path.join(TMPDIR, "step_02", f"{PATTERN_R1}.s2.out.fastq")),
+        r2 = temp(os.path.join(TMPDIR, "step_02", f"{PATTERN_R2}.s2.out.fastq")),
         stats = os.path.join(STATS, "step_02", "{sample}.s2.stats.tsv")
     benchmark:
-        BENCHDIR + "/preprocessing/step_02/remove_3prime_contaminant_{sample}.txt"
+        os.path.join(BENCHDIR, "preprocessing/step_02/remove_3prime_contaminant_{sample}.txt")
     log:
-        STDERR + "/step_02/{sample}.s2.log"
+        os.path.join(STDERR, "step_02/{sample}.s2.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -92,17 +92,17 @@ rule remove_primer_free_adapter:
     Step 03: Remove primer free adapter (both orientations)
     """
     input:
-        r1 = os.path.join(TMPDIR, "step_02", PATTERN_R1 + ".s2.out.fastq"),
-        r2 = os.path.join(TMPDIR, "step_02", PATTERN_R2 + ".s2.out.fastq"),
+        r1 = os.path.join(TMPDIR, "step_02", f"{PATTERN_R1}.s2.out.fastq"),
+        r2 = os.path.join(TMPDIR, "step_02", f"{PATTERN_R2}.s2.out.fastq"),
         primers = os.path.join(CONPATH, "nebnext_adapters.fa")
     output:
-        r1 = temp(os.path.join(TMPDIR, "step_03", PATTERN_R1 + ".s3.out.fastq")),
-        r2 = temp(os.path.join(TMPDIR, "step_03", PATTERN_R2 + ".s3.out.fastq")),
+        r1 = temp(os.path.join(TMPDIR, "step_03", f"{PATTERN_R1}.s3.out.fastq")),
+        r2 = temp(os.path.join(TMPDIR, "step_03", f"{PATTERN_R2}.s3.out.fastq")),
         stats = os.path.join(STATS, "step_03", "{sample}.s3.stats.tsv")
     benchmark:
-        BENCHDIR + "/preprocessing/step_03/remove_primer_free_adapter_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_03/remove_primer_free_adapter_{sample}.txt")
     log:
-        STDERR + "/step_03/{sample}.s3.log"
+        os.path.join(STDERR, "/step_03/{sample}.s3.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -123,17 +123,17 @@ rule remove_adapter_free_primer:
     Step 04: Remove adapter free primer (both orientations)
     """
     input:
-        r1 = os.path.join(TMPDIR, "step_03", PATTERN_R1 + ".s3.out.fastq"),
-        r2 = os.path.join(TMPDIR, "step_03", PATTERN_R2 + ".s3.out.fastq"),
+        r1 = os.path.join(TMPDIR, "step_03", f"{PATTERN_R1}.s3.out.fastq"),
+        r2 = os.path.join(TMPDIR, "step_03", f"{PATTERN_R2}.s3.out.fastq"),
         primers = os.path.join(CONPATH, "rc_primerB_ad6.fa")
     output:
-        r1 = temp(os.path.join(TMPDIR, "step_04", PATTERN_R1 + ".s4.out.fastq")),
-        r2 = temp(os.path.join(TMPDIR, "step_04", PATTERN_R2 + ".s4.out.fastq")),
+        r1 = temp(os.path.join(TMPDIR, "step_04", f"{PATTERN_R1}.s4.out.fastq")),
+        r2 = temp(os.path.join(TMPDIR, "step_04", f"{PATTERN_R2}.s4.out.fastq")),
         stats = os.path.join(STATS, "step_04", "{sample}.s4.stats.tsv")
     benchmark:
-        BENCHDIR + "/preprocessing/step_04/remove_adapter_free_primer_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_04/remove_adapter_free_primer_{sample}.txt")
     log:
-        STDERR + "/step_04/{sample}.s4.log"
+        os.path.join(STDERR, "/step_04/{sample}.s4.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -155,17 +155,17 @@ rule remove_vector_contamination:
     Step 05: Vector contamination removal (PhiX + NCBI UniVecDB)
     """
     input:
-        r1 = os.path.join(TMPDIR, "step_04", PATTERN_R1 + ".s4.out.fastq"),
-        r2 = os.path.join(TMPDIR, "step_04", PATTERN_R2 + ".s4.out.fastq"),
+        r1 = os.path.join(TMPDIR, "step_04", f"{PATTERN_R1}.s4.out.fastq"),
+        r2 = os.path.join(TMPDIR, "step_04", f"{PATTERN_R2}.s4.out.fastq"),
         primers = os.path.join(CONPATH, "vector_contaminants.fa")
     output:
-        r1 = temp(os.path.join(TMPDIR, "step_05", PATTERN_R1 + ".s5.out.fastq")),
-        r2 = temp(os.path.join(TMPDIR, "step_05", PATTERN_R2 + ".s5.out.fastq")),
+        r1 = temp(os.path.join(TMPDIR, "step_05", f"{PATTERN_R1}.s5.out.fastq")),
+        r2 = temp(os.path.join(TMPDIR, "step_05", f"{PATTERN_R2}.s5.out.fastq")),
         stats = os.path.join(STATS, "step_05", "{sample}.s5.stats.tsv")
     benchmark:
-        BENCHDIR + "/preprocessing/step_05/remove_vector_contamination_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_05/remove_vector_contamination_{sample}.txt")
     log:
-        STDERR + "/step_05/{sample}.s5.log"
+        os.path.join(STDERR, "/step_05/{sample}.s5.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -187,16 +187,16 @@ rule remove_low_quality:
     Step 06: Remove remaining low-quality bases and short reads
     """
     input:
-        r1 = os.path.join(TMPDIR, "step_05", PATTERN_R1 + ".s5.out.fastq"),
-        r2 = os.path.join(TMPDIR, "step_05", PATTERN_R2 + ".s5.out.fastq")
+        r1 = os.path.join(TMPDIR, "step_05", f"{PATTERN_R1}.s5.out.fastq"),
+        r2 = os.path.join(TMPDIR, "step_05", f"{PATTERN_R2}.s5.out.fastq")
     output:
-        r1 = temp(os.path.join(TMPDIR, PATTERN_R1 + ".clean.out.fastq")),
-        r2 = temp(os.path.join(TMPDIR, PATTERN_R2 + ".clean.out.fastq")),
+        r1 = temp(os.path.join(TMPDIR, f"{PATTERN_R1}.clean.out.fastq")),
+        r2 = temp(os.path.join(TMPDIR, f"{PATTERN_R2}.clean.out.fastq")),
         stats = os.path.join(STATS, "step_06", "{sample}.s6.stats.tsv")
     benchmark:
-        BENCHDIR + "/preprocessing/step_06/remove_low_quality_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_06/remove_low_quality_{sample}.txt")
     log:
-        STDERR + "/step_06/{sample}.s6.log"
+        os.path.join(STDERR, "/step_06/{sample}.s6.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -225,7 +225,9 @@ rule create_host_index:
     output:
         HOSTINDEX
     benchmark:
-        BENCHDIR + "/preprocessing/create_minimap_host_index.txt"
+        os.path.join(BENCHDIR, "/preprocessing/create_minimap_host_index.txt")
+    log:
+        os.path.join(STDERR, 'create_host_index.log')
     resources:
         mem_mb=64000,
         cpus=16
@@ -244,17 +246,17 @@ rule host_removal_mapping:
     (https://github.com/shandley/hecatomb)
     """
     input:
-        r1 = os.path.join(TMPDIR, PATTERN_R1 + ".clean.out.fastq"),
-        r2 = os.path.join(TMPDIR, PATTERN_R2 + ".clean.out.fastq"),
+        r1 = os.path.join(TMPDIR, f"{PATTERN_R1}.clean.out.fastq"),
+        r2 = os.path.join(TMPDIR, f"{PATTERN_R2}.clean.out.fastq"),
         host = HOSTINDEX
     output:
-        os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".all.fastq")
+        os.path.join(QC, "HOST_REMOVED", f"{PATTERN_R1}.all.fastq")
     benchmark:
-        BENCHDIR + "/preprocessing/step_07/host_removal_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_07/host_removal_{sample}.txt")
     log:
-        mm=STDERR + "/host_removal/{sample}.host_removal.minimap.log",
-        sv=STDERR + "/host_removal/{sample}.host_removal.samtoolsView.log",
-        fq=STDERR + "/host_removal/{sample}.host_removal.samtoolsFastq.log"
+        mm=os.path.join(STDERR, "/host_removal/{sample}.host_removal.minimap.log"),
+        sv=os.path.join(STDERR, "/host_removal/{sample}.host_removal.samtoolsView.log"),
+        fq=os.path.join(STDERR, "/host_removal/{sample}.host_removal.samtoolsFastq.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -323,13 +325,13 @@ rule remove_exact_dups:
     Step 08: Remove exact duplicates
     """
     input:
-        os.path.join(QC, "HOST_REMOVED", PATTERN_R1 + ".all.fastq")
+        os.path.join(QC, "HOST_REMOVED", f"{PATTERN_R1}.all.fastq")
     output:
-        temp(os.path.join(QC, "CLUSTERED", PATTERN_R1 + ".deduped.out.fastq"))
+        temp(os.path.join(QC, "CLUSTERED", f"{PATTERN_R1}.deduped.out.fastq"))
     benchmark:
-        BENCHDIR + "/preprocessing/step_08/remove_exact_dups_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_08/remove_exact_dups_{sample}.txt")
     log:
-        STDERR + "/clustering/{sample}.dedupe.log"
+        os.path.join(STDERR, "/clustering/{sample}.dedupe.log")
     resources:
         mem_mb=64000,
         cpus=8
@@ -348,19 +350,19 @@ rule cluster_similar_sequences:
     Step 09: Cluster similar sequences at CLUSTERID in config.yaml. Default: 97% identity
     """
     input:
-        os.path.join(QC, "CLUSTERED", PATTERN_R1 + ".deduped.out.fastq")
+        os.path.join(QC, "CLUSTERED", f"{PATTERN_R1}.deduped.out.fastq")
     output:
-        temp(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + "_rep_seq.fasta")),
-        temp(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + "_cluster.tsv")),
-        temp(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + "_all_seqs.fasta"))
+        temp(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}_rep_seq.fasta")),
+        temp(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}_cluster.tsv")),
+        temp(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}_all_seqs.fasta"))
     params:
         respath=os.path.join(QC, "CLUSTERED", "LINCLUST"),
         tmppath=os.path.join(QC, "CLUSTERED", "LINCLUST", "{sample}_TMP"),
         prefix=PATTERN_R1
     benchmark:
-        BENCHDIR + "/preprocessing/step_08/cluster_similar_seqs_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_08/cluster_similar_seqs_{sample}.txt")
     log:
-        STDERR + "/clustering/{sample}.linclust.log"
+        os.path.join(STDERR, "/clustering/{sample}.linclust.log")
     resources:
         mem_mb=64000,
         cpus=16
@@ -380,14 +382,14 @@ rule create_individual_seqtables:
     as a sample and each cell the counts of each sequence per sample
     """
     input:
-        seqs=os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + "_rep_seq.fasta"),
-        counts=os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + "_cluster.tsv")
+        seqs=os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}_rep_seq.fasta"),
+        counts=os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}_cluster.tsv")
     output:
-        seqs=temp(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqs")),
-        counts=temp(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".counts")),
-        seqtable=temp(os.path.join(QC, "CLUSTERED", "LINCLUST", PATTERN_R1 + ".seqtable"))
+        seqs=temp(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}.seqs")),
+        counts=temp(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}.counts")),
+        seqtable=temp(os.path.join(QC, "CLUSTERED", "LINCLUST", f"{PATTERN_R1}.seqtable"))
     benchmark:
-        BENCHDIR + "/preprocessing/step_10/individual_seq_tables_{sample}.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_10/individual_seq_tables_{sample}.txt")
     resources:
         mem_mb=64000,
         cpus=16
@@ -491,11 +493,10 @@ rule create_seqtable_index:
         os.path.join(RESULTS, "seqtable.fasta")
     output:
         os.path.join(RESULTS, "seqtable.faidx")
-    # resources:
-    #     mem_mb=100000,
-    #     cpus=64
     conda:
         "../envs/samtools.yaml"
+    log:
+        os.path.join(STDERR, 'create_seqtable_index.log')
     shell:
         """
         samtools faidx {input} -o {output}
@@ -511,7 +512,9 @@ rule calculate_seqtable_sequence_properties:
     output:
         os.path.join(RESULTS, "seqtable_properties.tsv")
     benchmark:
-        BENCHDIR + "/preprocessing/step_14/calculate_seqtable_sequence_properties.txt"
+        os.path.join(BENCHDIR, "/preprocessing/step_14/calculate_seqtable_sequence_properties.txt")
+    log:
+        os.path.join(STDERR, 'calculate_seqtable_sequence_properties.log')
     resources:
         mem_mb=64000,
         cpus=16
