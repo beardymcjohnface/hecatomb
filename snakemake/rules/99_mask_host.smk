@@ -12,6 +12,8 @@ rule map_shred_seq:
     resources:
         mem_mb=64000,
         cpus=8
+    log:
+        os.path.join(LOGDIR, 'bbmap.log')
     shell:
         """
         bbmap.sh ref={input.ref} in={input.shred} \
@@ -35,6 +37,8 @@ rule mask_host:
     resources:
         mem_mb=64000,
         cpus=8
+    log:
+        os.path.join(LOGDIR,'bbmask.log')
     shell:
         """
         bbmask.sh in={input.ref} out={output} \

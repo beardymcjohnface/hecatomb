@@ -10,6 +10,13 @@ hostFasta = config['HostFa']
 hostName = config['HostName']
 entropy = config['Entropy']
 
+
+# FOR SLURM
+LOGDIR = 'logs'
+if not os.path.exists(LOGDIR):
+    os.mkdir(LOGDIR)
+
+
 # OUTPUT HOST FASTA
 hostOutFasta = os.path.join(DBDIR, 'hosts', f'{hostName}_virus_masked.fasta')
 
