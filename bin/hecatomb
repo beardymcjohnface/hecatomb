@@ -147,15 +147,17 @@ def addHost():
     :return:
     """
     if not args.hostfasta:
-        sys.stderr.write('ERROR: Host fasta file required when adding new host genome')
+        sys.stderr.write('ERROR: Host fasta file required when adding new host genome\n')
         exit(1)
-    sys.stderr.write('Adding new virus-masked host for use with hecatomb')
+    sys.stderr.write('Adding new virus-masked host for use with hecatomb\n')
     if args.host == 'human':
         sys.stderr.write(f'Enter host name [{args.host}]:')
         host = input()
         host = host.rstrip()
         if host == '':
             host = args.host
+    else:
+        host = args.host
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'add_host.smk'))
     if args.cluster:
         runJobs = f'--profile {args.cluster}'
