@@ -4,9 +4,9 @@ rule map_shred_seq:
     """
     input:
         ref = hostFasta,
-        shred = SHRED
+        shred = virShred
     output:
-        temp(hostFasta + 'sam.gz')
+        temp(f'{hostFasta}.sam.gz')
     shell:
         """
         bbmap.sh ref={input.ref} in={input.shred} \
@@ -21,7 +21,7 @@ rule mask_host:
     """
     input:
         ref = hostFasta,
-        sam = hostFasta + 'sam.gz'
+        sam = f'{hostFasta}.sam.gz'
     output:
         hostOutFasta
     shell:

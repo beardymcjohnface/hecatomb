@@ -43,7 +43,9 @@ hecatomb [install/run] --snake="--force --cleanup-metadata seqtable.fasta"
 )
 parser.add_argument('command', choices=['install', 'run', 'addHost'])
 parser.add_argument('--reads', help='Directory containing seq data')
-parser.add_argument('--host', help='Host genome for contaminant removal', default='human')
+parser.add_argument('--host', help='Host name for contaminant removal', default='human')
+parser.add_argument('--hostfasta', help='Host reference (when adding a new host genome)')
+parser.add_argument('--entropy', help='Host masking entropy (when adding a new host genome', default='0.7')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
 parser.add_argument('--snake',
                     help='Pass one or more commands to Snakemake e.g. --snake=--unlock',
@@ -126,7 +128,7 @@ def run():
     if not args.reads:
         sys.stderr.write('ERROR: please specify the directory with sequencing reads with --reads')
         exit(1)
-    sys.stderr.write(f"Running Hecatomb\n")
+    sys.stderr.write("Running Hecatomb\n")
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'Snakefile'))
     if args.cluster:
         runJobs = f'--profile {args.cluster}'
@@ -144,7 +146,26 @@ def addHost():
     Add a new host to the Hecatomb database
     :return:
     """
-    pass
+    if not args.hostfasta:
+        sys.stderr.write('ERROR: Host fasta file required when adding new host genome')
+        exit(1)
+    sys.stderr.write('Adding new virus-masked host for use with hecatomb')
+    if args.host == 'human':
+        sys.stderr.write(f'Enter host name [{args.host}]:')
+        host = input()
+        host = host.rstrip()
+        if host == '':
+            host = args.host
+    snekFile = os.path.normpath(os.path.join(SNEKDIR, 'add_host.smk'))
+    if args.cluster:
+        runJobs = f'--profile {args.cluster}'
+    else:
+        runJobs = '-j 16'
+    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C HostFa={args.hostfasta} HostName={host} Entropy={args.entropy}'
+    if subprocess.call(runCommand.split()) == 0:
+        sys.stderr.write("Host genome successfully added\n")
+    else:
+        sys.stderr.write("Failed to add host genome\n")
 
 
 # Run the program
