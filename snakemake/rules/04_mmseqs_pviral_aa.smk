@@ -56,8 +56,8 @@ rule seqtable_taxsearch:
     benchmark:
         BENCHDIR + "/seqtable_taxsearch.txt"
     resources:
-        mem_mb=20000,
-        cpus=16,
+        mem_mb=128000,
+        cpus=32,
         time_min=1440
     conda:
         "../envs/mmseqs2.yaml"

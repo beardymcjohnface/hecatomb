@@ -497,6 +497,8 @@ rule create_seqtable_index:
         "../envs/samtools.yaml"
     log:
         os.path.join(STDERR, 'create_seqtable_index.log')
+    resources:
+        mem_mb=8000
     shell:
         """
         samtools faidx {input} -o {output}
