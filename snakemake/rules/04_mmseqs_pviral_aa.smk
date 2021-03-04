@@ -161,8 +161,7 @@ rule find_viruses:
     shell:
         """
         grep 'Viruses;' {input} | cut -f1,5 | sed 's/phi14:2/phi14_2/g' | \
-            sed 's/;/\\t/g' | \
-            sort -n -k1 > {output}
+            sed 's/;/\\t/g' > {output}
         """
 
 # Extract phage viral lineages and generate taxonomy table for import into R as PhyloSeq object
