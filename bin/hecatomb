@@ -66,7 +66,7 @@ confFile = os.path.normpath(os.path.join(SNEKDIR, 'config/database_config.yaml')
 
 
 # Snakemake run command + additional args
-runSnake = f'snakemake --use-conda --conda-frontend mamba --conda-prefix {CONDDIR} --configfile {confFile} '
+runSnake = f'snakemake --use-conda --conda-frontend mamba --rerun-incomplete --nolock --conda-prefix {CONDDIR} --configfile {confFile} '
 if args.snake:
     runSnake = runSnake + ' '.join(c for c in args.snake)
 

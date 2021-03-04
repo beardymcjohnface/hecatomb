@@ -282,6 +282,7 @@ rule unclassified_lineages:
                 sort -n -k1 > {output}
         """
 
+# TODO memory optimisation?
 rule pull_unclassified_seqs:
     input:
         fa = os.path.join(RESULTS, "seqtable.fasta"),
@@ -290,7 +291,7 @@ rule pull_unclassified_seqs:
         os.path.join(AA_OUT, "pviral_aa_unclassified_seqs.fasta")
         #os.path.join(AA_OUT, "unclassified_seqs.fasta")
     resources:
-        mem_mb = 8000
+        mem_mb = 16000
     shell:
         """
         grep --no-group-separator -A 1 -Fwf {input.ls} {input.fa} > {output}
