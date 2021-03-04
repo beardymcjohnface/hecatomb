@@ -233,12 +233,15 @@ rule find_non_phage_seqs:
     shell:
         "cut -f1 {input} > {output}"
 
+# TODO memory optimisation?
 rule pull_non_phage_seqs:
     input:
         fa = os.path.join(RESULTS, "seqtable.fasta"),
         ls = os.path.join(AA_OUT, "viruses_seqs.list")
     output:
         os.path.join(AA_OUT, "viruses_seqs.fasta")
+    resources:
+        mem_mb = 16000
     shell:
         """
         cat {input.fa} | {{ grep --no-group-separator -A 1 -Fwf {input.ls} || true; }} > {output}
