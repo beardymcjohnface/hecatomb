@@ -47,13 +47,14 @@ parser.add_argument('--host', help='Host name for contaminant removal', default=
 parser.add_argument('--hostfasta', help='Host reference (when adding a new host genome)')
 parser.add_argument('--entropy', help='Host masking entropy (when adding a new host genome', default='0.7')
 parser.add_argument('--cluster', choices=['slurm', 'sge'])
+parser.add_argument('--threads', help='Number of threads to use (ignored if using --cluster)', default='16')
 parser.add_argument('--snake',
                     help='Pass one or more commands to Snakemake e.g. --snake=--unlock',
                     action='append')
 args = parser.parse_args()
 
 
-# directories of hecatombs installation etc
+# directories of hecatomb installation etc
 BINDIR = os.path.dirname(os.path.realpath(__file__))
 SNEKDIR = os.path.normpath(os.path.join(BINDIR, '../snakemake'))
 CONDDIR = os.path.normpath(os.path.join(SNEKDIR, 'conda'))
@@ -101,6 +102,22 @@ def initialiseCluster(cluster):
             call([EDITOR, clustConf])
 
 
+def runSnake(command, msg):
+    """
+    Function to run snakemake and confirm success
+
+    :param command: The snakemake command to run
+    :param msg: Success message if it runs fine
+    :return: none
+    """
+    sys.stderr.write(f'Running snakemake command:\n{command}\n')
+    if subprocess.call(command.split())==0:
+        sys.stderr.write(msg)
+    else:
+        sys.stderr.write("ERROR: Snakemake command failed\n")
+        exit(1)
+
+
 # Functions for installing and running hecatomb
 def install():
     """
@@ -110,14 +127,12 @@ def install():
     if args.cluster:
         runJobs = f'--profile {args.cluster}'
     else:
-        runJobs = '-j 16'
+        runJobs = f'-j {args.threads}'
     sys.stderr.write("Checking and downloading database files\n")
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_databases.smk'))
     runCommand = f'{runSnake} -s {snekFile} {runJobs}'
-    if subprocess.call(runCommand.split())==0:
-        sys.stderr.write("Database installation finished successfully\n")
-    else:
-        sys.stderr.write("ERROR: Database installation failed\n")
+    successMsg = "Database installation finished successfully\n"
+    runSnake(runCommand, successMsg)
 
 
 def run():
@@ -133,12 +148,10 @@ def run():
     if args.cluster:
         runJobs = f'--profile {args.cluster}'
     else:
-        runJobs = '-j 16'
+        runJobs = f'-j {args.threads}'
     runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Reads={args.reads} Host={args.host}'
-    if subprocess.call(runCommand.split()) == 0:
-        sys.stderr.write("Hecatomb finished successfully\n")
-    else:
-        sys.stderr.write("ERROR: Hecatomb run failed\n")
+    successMsg = "Hecatomb finished successfully\n"
+    runSnake(runCommand, successMsg)
 
 
 def addHost():
@@ -162,12 +175,10 @@ def addHost():
     if args.cluster:
         runJobs = f'--profile {args.cluster}'
     else:
-        runJobs = '-j 16'
+        runJobs = f'-j {args.threads}'
     runCommand = f'{runSnake} -s {snekFile} {runJobs} -C HostFa={args.hostfasta} HostName={host} Entropy={args.entropy}'
-    if subprocess.call(runCommand.split()) == 0:
-        sys.stderr.write("Host genome successfully added\n")
-    else:
-        sys.stderr.write("Failed to add host genome\n")
+    successMsg = "Host genome successfully added\n"
+    runSnake(runCommand, successMsg)
 
 
 # Run the program
@@ -178,5 +189,5 @@ commands = {'install':install, 'run':run, 'addHost':addHost}
 commands[args.command]()
 
 time.sleep(1)
-
+exit(0)
 
