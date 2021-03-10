@@ -63,7 +63,7 @@ rule viral_seqs_tax_search:
     resources:
         mem_mb=128000,
         cpus=16,
-        time_min=1440
+        time_min=2880
     conda:
         "../envs/mmseqs2.yaml"
     shell:
