@@ -67,9 +67,9 @@ confFile = os.path.normpath(os.path.join(SNEKDIR, 'config/database_config.yaml')
 
 
 # Snakemake run command + additional args
-runSnake = f'snakemake --use-conda --conda-frontend mamba --rerun-incomplete --nolock --conda-prefix {CONDDIR} --configfile {confFile} '
+snakeCommand = f'snakemake --use-conda --conda-frontend mamba --rerun-incomplete --nolock --conda-prefix {CONDDIR} --configfile {confFile} '
 if args.snake:
-    runSnake = runSnake + ' '.join(c for c in args.snake)
+    snakeCommand = snakeCommand + ' '.join(c for c in args.snake)
 
 
 def initialiseCluster(cluster):
@@ -102,7 +102,7 @@ def initialiseCluster(cluster):
             call([EDITOR, clustConf])
 
 
-def runSnake(command, msg):
+def runSnakeSys(command, msg):
     """
     Function to run snakemake and confirm success
 
@@ -130,9 +130,9 @@ def install():
         runJobs = f'-j {args.threads}'
     sys.stderr.write("Checking and downloading database files\n")
     snekFile = os.path.normpath(os.path.join(SNEKDIR, 'download_databases.smk'))
-    runCommand = f'{runSnake} -s {snekFile} {runJobs}'
+    runCommand = f'{snakeCommand} -s {snekFile} {runJobs}'
     successMsg = "Database installation finished successfully\n"
-    runSnake(runCommand, successMsg)
+    runSnakeSys(runCommand, successMsg)
 
 
 def run():
@@ -149,9 +149,9 @@ def run():
         runJobs = f'--profile {args.cluster}'
     else:
         runJobs = f'-j {args.threads}'
-    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C Reads={args.reads} Host={args.host}'
+    runCommand = f'{snakeCommand} -s {snekFile} {runJobs} -C Reads={args.reads} Host={args.host}'
     successMsg = "Hecatomb finished successfully\n"
-    runSnake(runCommand, successMsg)
+    runSnakeSys(runCommand, successMsg)
 
 
 def addHost():
@@ -176,9 +176,9 @@ def addHost():
         runJobs = f'--profile {args.cluster}'
     else:
         runJobs = f'-j {args.threads}'
-    runCommand = f'{runSnake} -s {snekFile} {runJobs} -C HostFa={args.hostfasta} HostName={host} Entropy={args.entropy}'
+    runCommand = f'{snakeCommand} -s {snekFile} {runJobs} -C HostFa={args.hostfasta} HostName={host} Entropy={args.entropy}'
     successMsg = "Host genome successfully added\n"
-    runSnake(runCommand, successMsg)
+    runSnakeSys(runCommand, successMsg)
 
 
 # Run the program
